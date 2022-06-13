@@ -3,7 +3,7 @@
 
 ![Figure Image](https://www.biorxiv.org/content/biorxiv/early/2019/10/21/812644/F3.large.jpg?width=800&height=600&carousel=1)
 
-This is a software package to extract axonal data from cleared brains as demonstrated in [Mapping Mesoscale Axonal Projections in the Mouse Brain Using A 3D Convolutional Network](https://www.biorxiv.org/content/10.1101/812644v1.full) Friedmann D, Pun A, et al. While it was trained and tested on axons in iDISCO-cleared samples imaged by lightsheet microscopy, it works well at identifying many types of filamentous structures in 3D volumes. Instructions are included for segmenting your data with our best existing model, but we also provide guidance on transfer learning with your own annotated data.
+This is a - software package to extract axonal data from cleared brains as demonstrated in [Mapping Mesoscale Axonal Projections in the Mouse Brain Using A 3D Convolutional Network](https://www.biorxiv.org/content/10.1101/812644v1.full) Friedmann D, Pun A, et al. While it was trained and tested on axons in iDISCO-cleared samples imaged by lightsheet microscopy, it works well at identifying many types of filamentous structures in 3D volumes. Instructions are included for segmenting your data with our best existing model, but we also provide guidance on transfer learning with your own annotated data.
 
 There are two readmes—this one includes basic instructions and descriptions for getting TrailMap up and running. The second is written to be simple enough to be useful for novice users—not just of machine learning tools, but even if this is your first time using python or linux, you can hopefully follow along. 
 
