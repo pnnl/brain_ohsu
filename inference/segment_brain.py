@@ -6,6 +6,8 @@ import cv2
 import sys
 from PIL import Image
 
+from scipy.ndimage.filters import gaussian_filter
+
 # Will need to be adjusted depending on the GPU
 batch_size = 15
 
@@ -20,6 +22,22 @@ dim_offset = (input_dim - output_dim) // 2
 """
 Progress bar to indicate status of the segment_brain function
 """
+
+# https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/network_architecture/neural_network.py#L245
+def get_gaussian(patch_size, sigma_scale=1. / 8) -> np.ndarray:
+    tmp = np.zeros(patch_size)
+    center_coords = [i // 2 for i in patch_size]
+    sigmas = [i * sigma_scale for i in patch_size]
+    tmp[tuple(center_coords)] = 1
+    gaussian_importance_map = gaussian_filter(tmp, sigmas, 0, mode='constant', cval=0)
+    gaussian_importance_map = gaussian_importance_map / np.max(gaussian_importance_map) * 1
+    gaussian_importance_map = gaussian_importance_map.astype(np.float32)
+
+    # gaussian_importance_map cannot be 0, otherwise we may end up with nans!
+    gaussian_importance_map[gaussian_importance_map == 0] = np.min(
+        gaussian_importance_map[gaussian_importance_map != 0])
+
+    return gaussian_importance_map
 
 def draw_progress_bar(percent, eta, bar_len = 40):
     # percent float from 0 to 1.
@@ -88,6 +106,8 @@ a batch of chunks. To conserve memory, the function will load sections of the br
 
 def segment_brain(input_folder, output_folder, model):
 
+    gaussian_importance_map = get_gaussian((output_dim, output_dim, output_dim), sigma_scale=1. / 8)
+
     # Name of folder
     folder_name = os.path.basename(input_folder)
     # Get the list of tiff files
@@ -115,16 +135,17 @@ def segment_brain(input_folder, output_folder, model):
     # Each iteration of loop will cut a section from slices i to i + input_dim and run helper_segment_section
 
     section_index = -dim_offset
-    while section_index <= len(file_names) - input_dim + dim_offset:
+    while section_index <= 2 #len(file_names) - input_dim + dim_offset:
 
         # Read section of folder
         section = read_folder_section(input_folder, section_index, section_index + input_dim).astype('float32')
 
         # Make the volume pixel intensity between 0 and 1
+        #use same pre processing as in volumne generator
         section_vol = section / (2 ** 16 - 1)
 
         # Get the segmentation of this chunk
-        section_seg = helper_segment_section(model, section_vol)
+        section_seg = helper_segment_section(model, section_vol, gaussian_importance_map)
 
         # Write to output folder
         write_folder_section(output_folder, file_names, section_index, section_seg)
@@ -175,7 +196,7 @@ Helper function for segment_brain. Takes in a section of the brain
 """
 
 
-def helper_segment_section(model, section):
+def helper_segment_section(model, section, gaussian_importance_map):
     # List of bottom left corner coordinate of all input chunks in the section
     coords = []
 
@@ -185,17 +206,23 @@ def helper_segment_section(model, section):
     temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
                                     (dim_offset, dim_offset)), 'edge')
 
+    #keep track of sum of gaussian muliplier 
+    #https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/network_architecture/neural_network.py#L363
+    aggregated_nb_of_predictions = np.pad(section, ((0, 0), (dim_offset, dim_offset),
+                                    (dim_offset, dim_offset)), 'edge')
+
     # Add most chunks aligned with top left corner
-    for x in range(0, temp_section.shape[1] - input_dim, output_dim):
-        for y in range(0, temp_section.shape[2] - input_dim, output_dim):
+    #divide by 2 to get overlapping windows
+    for x in range(0, temp_section.shape[1] - input_dim, int(output_dim/2)):
+        for y in range(0, temp_section.shape[2] - input_dim, int(output_dim/2)):
             coords.append((0, x, y))
 
     # Add bottom side aligned with bottom side
-    for x in range(0, temp_section.shape[1] - input_dim, output_dim):
+    for x in range(0, temp_section.shape[1] - input_dim, int(output_dim/2)):
         coords.append((0, x, temp_section.shape[2]-input_dim))
 
     # Add right side aligned with right side
-    for y in range(0, temp_section.shape[2] - input_dim, output_dim):
+    for y in range(0, temp_section.shape[2] - input_dim, int(output_dim/2)):
         coords.append((0, temp_section.shape[1]-input_dim, y))
 
     # Add bottom right corner
@@ -234,12 +261,23 @@ def helper_segment_section(model, section):
 
         # Once the batch is filled up run the network on the chunks
         batch_input = np.reshape(batch_crops, batch_crops.shape + (1,))
+
         output = np.squeeze(model.predict(batch_input)[:, :, :, :, [0]])
+
 
         # Place the predictions in the segmentation
         for j in range(len(batch_coords)):
             (z, x, y) = batch_coords[j] + dim_offset
-            seg[z:z + output_dim, x:x + output_dim, y:y + output_dim] = output[j]
+
+            # multiple by guassian_importance map
+            output[j] *=  gaussian_importance_map
+            seg[z:z + output_dim, x:x + output_dim, y:y + output_dim] =+ output[j]
+            #keep track of total sum of guassian_importance_map to normalize
+            # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/network_architecture/neural_network.py#L394
+            aggregated_nb_of_predictions[z:z + output_dim, x:x + output_dim, y:y + output_dim]  += gaussian_importance_map
+    #divide by total sum of guassian_importance_map to normalize
+    seg /= aggregated_nb_of_predictions
+
 
     cropped_seg = seg[:, dim_offset: dim_offset + section.shape[1], dim_offset: dim_offset + section.shape[2]]
     return cropped_seg
