@@ -1,5 +1,5 @@
 from datetime import datetime
-from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
+from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau
 from models.model import get_net
 import tensorflow as tf
 import os
@@ -42,6 +42,8 @@ if __name__ == "__main__":
     best_weight_checkpoint = ModelCheckpoint(filepath=base_path + '/data/model-weights/best_weights_checkpoint.hdf5',
                                              verbose=1, save_best_only=True)
 
+    
+
     weights_path = base_path + "/data/model-weights/trailmap_model.hdf5"
 
     model = get_net()
@@ -49,6 +51,10 @@ if __name__ == "__main__":
     # Remove the model.load_weight line below if you want to train from scratch
     model.load_weights(weights_path)
 
+    lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                              patience=5, min_lr=0.001)
+
+    #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
     model.fit_generator(train_generator,
                         steps_per_epoch=120,
                         epochs=epochs,
@@ -56,7 +62,7 @@ if __name__ == "__main__":
                         validation_steps=30,
                         use_multiprocessing=False,
                         workers=1,
-                        callbacks=[tboard, current_checkpoint, best_weight_checkpoint, period_checkpoint],
+                        callbacks=[lr_scheduler, tboard, current_checkpoint, best_weight_checkpoint, period_checkpoint],
                         verbose=1)
 
     model_name = 'model_' + now.strftime("%B-%d-%Y-%I:%M%p")
