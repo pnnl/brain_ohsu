@@ -4,6 +4,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Conv3D, MaxPooling3D, BatchNormalization, Conv3DTranspose, concatenate, \
     Cropping3D, Input
 from tensorflow.keras.optimizers import Adam
+# from keras.callbacks import ReduceLROnPlateau
 
 input_dim = 64
 output_dim = 36
@@ -193,6 +194,8 @@ def get_net():
     # Output dim is (36, 36, 36)
     preds = Conv3D(1, (1, 1, 1), activation="sigmoid")(batch7)
     model = Model(inputs=input, outputs=preds)
+
+    # rlrop = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=100)
 
     model.compile(optimizer=Adam(lr=0.001, decay=0.00), loss=weighted_binary_crossentropy,
                   metrics=[axon_precision, axon_recall, f1_score, artifact_precision, edge_axon_precision, adjusted_accuracy])

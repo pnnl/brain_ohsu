@@ -18,7 +18,7 @@ if __name__ == "__main__":
     weights_path = base_path + "/data/model-weights/trailmap_model.hdf5"
 
     model = get_net()
-    model.load_weights(weights_path)
+    #model.load_weights(weights_path)
 
     for input_folder in input_batch:
 
