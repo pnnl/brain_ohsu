@@ -2,6 +2,16 @@ from tensorflow.keras.utils import Sequence
 import cv2
 import numpy as np
 import random
+from builtins import range
+from batchgenerators.augmentations.utils import create_zero_centered_coordinate_mesh, elastic_deform_coordinates, \
+    interpolate_img, \
+    rotate_coords_2d, rotate_coords_3d, scale_coords, resize_segmentation, resize_multichannel_image, \
+    elastic_deform_coordinates_2
+from batchgenerators.augmentations.crop_and_pad_augmentations import random_crop as random_crop_aug
+from batchgenerators.augmentations.crop_and_pad_augmentations import center_crop as center_crop_augfrom 
+models.model import input_dim, output_dim, normal
+from utilities.utilities import *
+offset = (input_dim - output_dim)//2
 
 
 class VolumeDataGenerator(Sequence):
@@ -47,6 +57,106 @@ class VolumeDataGenerator(Sequence):
         M = np.float32([[1, 0, dx], [0, 1, dy]])
         result = cv2.warpAffine(image, M, (cols, rows))
         return result
+        
+    #https://github.com/MIC-DKFZ/batchgenerators/blob/01f225d843992eec5467c109875accd6ea955155/batchgenerators/augmentations/spatial_transformations.py#L19
+
+    def augment_spatial(data, seg, patch_size, patch_center_dist_from_border=30,
+                        do_elastic_deform=True, alpha=(0., 1000.), sigma=(10., 13.),
+                        do_rotation=True, angle_x=(0, 2 * np.pi), angle_y=(0, 2 * np.pi), angle_z=(0, 2 * np.pi),
+                        do_scale=True, scale=(0.75, 1.25), border_mode_data='nearest', border_cval_data=0, order_data=3,
+                        border_mode_seg='nearest', border_cval_seg=0, order_seg=3, random_crop=False, p_el_per_sample=1,
+                        p_scale_per_sample=1, p_rot_per_sample=1, independent_scale_for_each_axis=False,
+                        p_rot_per_axis: float = 1, p_independent_scale_per_axis: int = 1):
+        dim = len(patch_size)
+        
+        seg_result = None
+        if seg is not None:
+            if dim == 2:
+                seg_result = np.zeros((patch_size[0], patch_size[1], seg.shape[3]), dtype=np.float32)
+            else:
+                seg_result = np.zeros((patch_size[0], patch_size[1], patch_size[2], seg.shape[3]),
+                                    dtype=np.float32)
+
+        if dim == 2:
+            data_result = np.zeros(( patch_size[0], patch_size[1], data.shape[3]), dtype=np.float32)
+        else:
+            data_result = np.zeros((  patch_size[0], patch_size[1], patch_size[2], data.shape[3]) ,
+                                dtype=np.float32)
+
+        if not isinstance(patch_center_dist_from_border, (list, tuple, np.ndarray)):
+            patch_center_dist_from_border = dim * [patch_center_dist_from_border]
+
+
+        coords = create_zero_centered_coordinate_mesh(patch_size)
+        modified_coords = False
+
+        if do_elastic_deform and np.random.uniform() < p_el_per_sample:
+            a = np.random.uniform(alpha[0], alpha[1])
+            s = np.random.uniform(sigma[0], sigma[1])
+            coords = elastic_deform_coordinates(coords, a, s)
+            modified_coords = True
+
+        if do_rotation and np.random.uniform() < p_rot_per_sample:
+
+            if np.random.uniform() <= p_rot_per_axis:
+                a_x = np.random.uniform(angle_x[0], angle_x[1])
+            else:
+                a_x = 0
+
+            if dim == 3:
+                if np.random.uniform() <= p_rot_per_axis:
+                    a_y = np.random.uniform(angle_y[0], angle_y[1])
+                else:
+                    a_y = 0
+
+                if np.random.uniform() <= p_rot_per_axis:
+                    a_z = np.random.uniform(angle_z[0], angle_z[1])
+                else:
+                    a_z = 0
+
+                coords = rotate_coords_3d(coords, a_x, a_y, a_z)
+            else:
+                coords = rotate_coords_2d(coords, a_x)
+            modified_coords = True
+
+        if do_scale and np.random.uniform() < p_scale_per_sample:
+            if independent_scale_for_each_axis and np.random.uniform() < p_independent_scale_per_axis:
+                sc = []
+                for _ in range(dim):
+                    if np.random.random() < 0.5 and scale[0] < 1:
+                        sc.append(np.random.uniform(scale[0], 1))
+                    else:
+                        sc.append(np.random.uniform(max(scale[0], 1), scale[1]))
+            else:
+                if np.random.random() < 0.5 and scale[0] < 1:
+                    sc = np.random.uniform(scale[0], 1)
+                else:
+                    sc = np.random.uniform(max(scale[0], 1), scale[1])
+
+            coords = scale_coords(coords, sc)
+            modified_coords = True
+
+        # now find a nice center location 
+        if modified_coords:
+            for d in range(dim):
+                #don't add 2 to d since removed channel and number
+                ctr = data.shape[d ] / 2. - 0.5
+                coords[d] += ctr
+            for channel_id in range(data.shape[3]):
+                data_result[:, :, :,  channel_id] = interpolate_img(data[:, :, :, channel_id], coords, order_data,
+                                                                        border_mode_data, cval=border_cval_data)
+            if seg is not None:
+                for channel_id in range(seg.shape[3]):
+                    
+                    seg_result[:, :, :,channel_id] = interpolate_img(seg[:, :, :, channel_id], coords, order_seg,
+                                                                        border_mode_seg, cval=border_cval_seg,
+                                                                        is_seg=True)
+
+        else:
+
+                data_result = data
+                seg_result= seg
+        
 
     def _rotate_img(self, image, angle):
 
@@ -185,9 +295,15 @@ class VolumeDataGenerator(Sequence):
                 x_copy = np.copy(x[ind])
                 y_copy = np.copy(y[ind])
                 preprocess_vol = self._preprocess_vol(x_copy)
-                x_gen[counter] = self._transform_vol(preprocess_vol)
-                y_gen[counter] = self._transform_vol(y_copy)
-                y_gen[counter] = y_copy
+                if normal == True:
+                    x_gen[counter] = self._transform_vol(preprocess_vol)
+                    y_gen[counter] = self._transform_vol(y_copy)
+                else:
+                    x2, y2 = self.augment_spatial(preprocess_vol, y_copy, patch_size = preprocess_vol.squeeze().shape)
+            
+                y2 = np.copy(crop_numpy(offset, offset, offset, y2))
+                x_gen[counter] = x2
+                y_gen[counter] = y2
                 counter += 1
 
             yield x_gen, y_gen

@@ -1,4 +1,4 @@
-from models.model import input_dim, output_dim
+from models.model import input_dim, output_dim, normal
 from utilities.utilities import *
 import random
 
@@ -39,8 +39,10 @@ def load_data(data_path, nb_examples=None):
     y_train = []
 
     for i in inds:
-
-        offset = (input_dim - output_dim)//2
+        if normal == True:
+            offset = (input_dim - output_dim)//2
+        else:
+            offset = 0
 
         background = np.copy(crop_numpy(offset, offset, offset, y[i]))
         background[background == 2] = 0
