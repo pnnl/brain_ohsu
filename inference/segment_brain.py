@@ -135,7 +135,7 @@ def segment_brain(input_folder, output_folder, model):
     # Each iteration of loop will cut a section from slices i to i + input_dim and run helper_segment_section
 
     section_index = -dim_offset
-    while section_index <= 2: #len(file_names) - input_dim + dim_offset:
+    while section_index <= len(file_names) - input_dim + dim_offset:
 
         # Read section of folder
         section = read_folder_section(input_folder, section_index, section_index + input_dim).astype('float32')
