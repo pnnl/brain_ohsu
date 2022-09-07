@@ -2,7 +2,7 @@ import random
 from models import input_dim, normal
 from utilities.utilities import *
 
-
+oversample_foreground_percent = .9
 # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L204
 def get_do_oversample(i, nb_examples):
         return not i < round(nb_examples * (1 - oversample_foreground_percent))
@@ -70,7 +70,7 @@ def generate_data_set(data_original_path, data_set_path, nb_examples=None):
 
         write_tiff_stack(volume_chunk, data_set_path + "/volumes/volume-" + str(i) + ".tiff")
         write_tiff_stack(label_chunk, data_set_path + "/labels/label-" + str(i) + ".tiff")
-
+ 
         # Update bar every 5 percent
         if i % (nb_examples // 20) == 0:
             draw_progress_bar(i/nb_examples)

@@ -12,28 +12,28 @@ normal = False
 
 def create_weighted_binary_crossentropy(axon_weight, background_weight, artifact_weight, edge_weight):
     def weighted_binary_crossentropy(y_true, y_pred):
+        
         weights = tf.reduce_sum(y_true, axis=-1, keepdims=True)
 
         mask = tf.equal(weights, 1)
-
         axon_true = y_true[:, :, :, :, 0]
         axon_true = tf.expand_dims(axon_true, -1)
-        axon_mask = tf.boolean_mask(axon_true, mask)
+        axon_mask = tf.cast(tf.boolean_mask(axon_true, mask), tf.float32)
 
         background_true = y_true[:, :, :, :, 1]
         background_true = tf.expand_dims(background_true, -1)
-        background_mask = tf.boolean_mask(background_true, mask)
+        background_mask = tf.cast(tf.boolean_mask(background_true, mask), tf.float32)
 
         artifact_true = y_true[:, :, :, :, 2]
         artifact_true = tf.expand_dims(artifact_true, -1)
-        artifact_mask = tf.boolean_mask(artifact_true, mask)
+        artifact_mask = tf.cast(tf.boolean_mask(artifact_true, mask), tf.float32)
 
         edge_true = y_true[:, :, :, :, 3]
         edge_true = tf.expand_dims(edge_true, -1)
-        edge_mask = tf.boolean_mask(edge_true, mask)
+        edge_mask = tf.cast(tf.boolean_mask(edge_true, mask), tf.float32)
 
-        mask_true = tf.boolean_mask(axon_true, mask)
-        mask_pred = tf.boolean_mask(y_pred, mask)
+        mask_true = tf.cast(tf.boolean_mask(axon_true, mask), tf.float32)
+        mask_pred = tf.cast(tf.boolean_mask(y_pred, mask), tf.float32)
 
         crossentropy = K.binary_crossentropy(mask_true, mask_pred)
 
@@ -41,7 +41,6 @@ def create_weighted_binary_crossentropy(axon_weight, background_weight, artifact
                         (artifact_mask * artifact_weight) + (edge_mask * edge_weight)
 
         weighted_crossentropy = weight_vector * crossentropy
-
         return K.mean(weighted_crossentropy)
 
     return weighted_binary_crossentropy
@@ -53,6 +52,7 @@ def weighted_binary_crossentropy(y_true, y_pred):
 
 
 def adjusted_accuracy(y_true, y_pred):
+    #combine by taking sum accross label type (axons, artifacts, edge)
     weights = tf.reduce_sum(y_true, axis=-1, keepdims=True)
 
     mask = K.equal(weights, 1)
@@ -60,8 +60,8 @@ def adjusted_accuracy(y_true, y_pred):
     axons_true = y_true[:, :, :, :, 0]
     axons_true = K.expand_dims(axons_true, -1)
 
-    mask_true = tf.boolean_mask(axons_true, mask)
-    mask_pred = tf.boolean_mask(y_pred, mask)
+    mask_true = tf.cast(tf.boolean_mask(axons_true, mask), tf.float32)
+    mask_pred = tf.cast(tf.boolean_mask(y_pred, mask), tf.float32)
 
     return K.mean(K.equal(mask_true, K.round(mask_pred)))
 
@@ -71,6 +71,7 @@ def axon_precision(y_true, y_pred):
 
     mask = tf.equal(weights, 1)
 
+    #will return list only including items that were true axons
     mask_true = tf.boolean_mask(y_true[:, :, :, :, 0], mask)
     mask_pred = tf.boolean_mask(y_pred[:, :, :, :, 0], mask)
 
@@ -198,6 +199,6 @@ def get_net():
     # rlrop = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=100)
 
     model.compile(optimizer=Adam(lr=0.001, decay=0.00), loss=weighted_binary_crossentropy,
-                  metrics=[axon_precision, axon_recall, f1_score, artifact_precision, edge_axon_precision, adjusted_accuracy])
+                  metrics=[axon_precision, axon_recall, f1_score, artifact_precision, edge_axon_precision, adjusted_accuracy], run_eagerly=True)
 
     return model

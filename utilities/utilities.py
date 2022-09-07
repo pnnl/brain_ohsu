@@ -9,6 +9,8 @@ import sys
 
 def crop_numpy(dim1, dim2, dim3, vol):
     return vol[dim1:vol.shape[0] - dim1, dim2:vol.shape[1] - dim2, dim3:vol.shape[2] - dim3]
+def crop_numpy_batch(dim1, dim2, dim3, vol):
+    return vol[:, dim1:vol.shape[1] - dim1, dim2:vol.shape[2] - dim2, dim3:vol.shape[3] - dim3, :]
 
 
 def write_tiff_stack(vol, fname):

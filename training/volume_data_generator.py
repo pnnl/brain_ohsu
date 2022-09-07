@@ -9,7 +9,7 @@ from batchgenerators.augmentations.utils import create_zero_centered_coordinate_
     elastic_deform_coordinates_2
 from batchgenerators.augmentations.crop_and_pad_augmentations import random_crop as random_crop_aug
 from batchgenerators.augmentations.crop_and_pad_augmentations import center_crop as center_crop_augfrom 
-models.model import input_dim, output_dim, normal
+from models.model import input_dim, output_dim, normal
 from utilities.utilities import *
 offset = (input_dim - output_dim)//2
 
@@ -60,7 +60,7 @@ class VolumeDataGenerator(Sequence):
         
     #https://github.com/MIC-DKFZ/batchgenerators/blob/01f225d843992eec5467c109875accd6ea955155/batchgenerators/augmentations/spatial_transformations.py#L19
 
-    def augment_spatial(data, seg, patch_size, patch_center_dist_from_border=30,
+    def augment_spatial(self, data, seg, patch_size, patch_center_dist_from_border=30,
                         do_elastic_deform=True, alpha=(0., 1000.), sigma=(10., 13.),
                         do_rotation=True, angle_x=(0, 2 * np.pi), angle_y=(0, 2 * np.pi), angle_z=(0, 2 * np.pi),
                         do_scale=True, scale=(0.75, 1.25), border_mode_data='nearest', border_cval_data=0, order_data=3,
@@ -156,6 +156,7 @@ class VolumeDataGenerator(Sequence):
 
                 data_result = data
                 seg_result= seg
+        return data_result, seg_result
         
 
     def _rotate_img(self, image, angle):
@@ -281,7 +282,7 @@ class VolumeDataGenerator(Sequence):
     def flow(self, x, y, batch_size):
         while True:
             x_gen = np.zeros((batch_size,) + x.shape[1:])
-            y_gen = np.zeros((batch_size,) + y.shape[1:])
+            y_gen = np.zeros((batch_size,) + np.copy(crop_numpy_batch(offset, offset, offset, y)).shape[1:])
             inds = list(range(x.shape[0]))
             if len(inds) < batch_size:
                 raise ValueError("Samples less than batch_size")
@@ -299,7 +300,7 @@ class VolumeDataGenerator(Sequence):
                     x_gen[counter] = self._transform_vol(preprocess_vol)
                     y_gen[counter] = self._transform_vol(y_copy)
                 else:
-                    x2, y2 = self.augment_spatial(preprocess_vol, y_copy, patch_size = preprocess_vol.squeeze().shape)
+                    x2, y2 = self.augment_spatial(data= preprocess_vol, seg = y_copy, patch_size = preprocess_vol.squeeze().shape)
             
                 y2 = np.copy(crop_numpy(offset, offset, offset, y2))
                 x_gen[counter] = x2
