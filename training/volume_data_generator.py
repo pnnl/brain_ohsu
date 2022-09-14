@@ -282,7 +282,10 @@ class VolumeDataGenerator(Sequence):
     def flow(self, x, y, batch_size):
         while True:
             x_gen = np.zeros((batch_size,) + x.shape[1:])
-            y_gen = np.zeros((batch_size,) + np.copy(crop_numpy_batch(offset, offset, offset, y)).shape[1:])
+            if normal == True:
+                y_gen = np.zeros((batch_size,) + y.shape[1:])
+            else:
+                y_gen = np.zeros((batch_size,) + np.copy(crop_numpy_batch(offset, offset, offset, y)).shape[1:])
             inds = list(range(x.shape[0]))
             if len(inds) < batch_size:
                 raise ValueError("Samples less than batch_size")
@@ -302,9 +305,9 @@ class VolumeDataGenerator(Sequence):
                 else:
                     x2, y2 = self.augment_spatial(data= preprocess_vol, seg = y_copy, patch_size = preprocess_vol.squeeze().shape)
             
-                y2 = np.copy(crop_numpy(offset, offset, offset, y2))
-                x_gen[counter] = x2
-                y_gen[counter] = y2
+                    y2 = np.copy(crop_numpy(offset, offset, offset, y2))
+                    x_gen[counter] = x2
+                    y_gen[counter] = y2
                 counter += 1
 
             yield x_gen, y_gen

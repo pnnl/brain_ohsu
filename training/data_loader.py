@@ -5,11 +5,14 @@ import random
 
 # Load the data into
 def load_data(data_path, nb_examples=None):
+
     volumes_folder_path = data_path + "/volumes"
     labels_folder_path = data_path + "/labels"
 
     volumes_path = get_dir(volumes_folder_path)
     labels_path = get_dir(labels_folder_path)
+    print(volumes_path)
+    print(labels_path)
 
     assert len(labels_path) == len(volumes_path)
 

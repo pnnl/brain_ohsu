@@ -5,6 +5,10 @@ import time
 import cv2
 import sys
 from PIL import Image
+from inference.segment_brain_guass import loss_inference
+import csv
+
+from utilities.utilities import *
 
 # Will need to be adjusted depending on the GPU
 batch_size = 15
@@ -85,14 +89,18 @@ a batch of chunks. To conserve memory, the function will load sections of the br
 """
 
 
-def segment_brain2(input_folder, output_folder, model):
+def segment_brain_normal(input_folder, output_folder, model, name, tif_input = True):
+    if tif_input == True:
+        file_names = get_dir(os.path.join(input_folder, "volumes"))
+        vol= read_tiff_stack_inference(file_names[0])
+        write_folder_stack(vol, os.path.join(input_folder, f"slices_{name}"))
 
     # Name of folder
-    folder_name = os.path.basename(input_folder)
+    folder_name = os.path.basename(os.path.join(input_folder, f"slices_{name}"))
     # Get the list of tiff files
-    file_names = get_dir(input_folder)
+    file_names = get_dir(os.path.join(input_folder, f"slices_{name}"))
 
-    if len(file_names) < 36:
+    if len(file_names) < 10:
         print("The Z direction must contain a minimum of 36 images")
         return
 
@@ -117,7 +125,7 @@ def segment_brain2(input_folder, output_folder, model):
     while section_index <= len(file_names) - input_dim + dim_offset:
 
         # Read section of folder
-        section = read_folder_section(input_folder, section_index, section_index + input_dim).astype('float32')
+        section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), section_index, section_index + input_dim).astype('float32')
 
         # Make the volume pixel intensity between 0 and 1
         section_vol = section / (2 ** 16 - 1)
@@ -142,7 +150,7 @@ def segment_brain2(input_folder, output_folder, model):
     end_aligned = len(file_names) - input_dim + dim_offset
 
     # Read section of folder
-    section = read_folder_section(input_folder, end_aligned, end_aligned + input_dim).astype('float32')
+    section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), end_aligned, end_aligned + input_dim).astype('float32')
 
     # Make the volume pixel intensity between 0 and 1
     section_vol = section / (2 ** 16 - 1)
@@ -152,6 +160,13 @@ def segment_brain2(input_folder, output_folder, model):
     write_folder_section(output_folder, file_names, end_aligned, section_seg)
 
     total_time = "Total: " + str(round((time.time()/60) - start_time, 1)) + " mins"
+    if tif_input == True:
+        output_dict =loss_inference(input_folder, output_folder)
+
+        with open(output_folder + "/" + f"dict{name}.csv", 'w') as csv_file:  
+            writer = csv.writer(csv_file)
+            for key, value in output_dict.items():
+                writer.writerow([key, value])
     draw_progress_bar(1, total_time)
     print("\n")
 

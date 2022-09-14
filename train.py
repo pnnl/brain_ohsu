@@ -4,21 +4,23 @@ from models.model import get_net
 import tensorflow as tf
 import os
 from training import load_data, VolumeDataGenerator
+from models import input_dim, normal
 
 if __name__ == "__main__":
 
     base_path = os.path.abspath(__file__ + "/..")
 
     batch_size = 6
-    epochs = 1000
+    epochs = 50
 
     training_path = base_path + "/data/training/training-set"
     validation_path = base_path + "/data/validation/validation-set"
 
-    x_train, y_train = load_data(training_path, nb_examples=20)
-    x_validation, y_validation = load_data(validation_path, nb_examples=20)
+    x_train, y_train = load_data(training_path)
+    x_validation, y_validation = load_data(validation_path)
 
     print("Loaded Data")
+    print(normal)
 
     datagen = VolumeDataGenerator(
         horizontal_flip=False,
@@ -37,32 +39,45 @@ if __name__ == "__main__":
 
     tboard = TensorBoard(log_dir=logdir, histogram_freq=0, write_graph=True, write_images=False)
 
-    current_checkpoint = ModelCheckpoint(filepath=base_path + '/data/model-weights/latest_model.hdf5', verbose=1)
-    period_checkpoint = ModelCheckpoint(base_path + '/data/model-weights/weights{epoch:03d}.hdf5', period=5)
-    best_weight_checkpoint = ModelCheckpoint(filepath=base_path + '/data/model-weights/best_weights_checkpoint.hdf5',
+    current_checkpoint = ModelCheckpoint(filepath=base_path + '/data/model-weights/latest_model_false.hdf5', verbose=1)
+    period_checkpoint = ModelCheckpoint(base_path + '/data/model-weights/weights{epochs:03d}_false.hdf5', period=20)
+    best_weight_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/best_weights_checkpoint_normal_false.hdf5',
                                              verbose=1, save_best_only=True)
 
     
 
-    weights_path = base_path + "/data/model-weights/trailmap_model.hdf5"
+    weights_path = base_path + "/data/model-weights/original_best_weights.hdf5"
 
     model = get_net()
     # This will do transfer learning and start the model off with our current best model.
     # Remove the model.load_weight line below if you want to train from scratch
     model.load_weights(weights_path)
+    if normal == False:
+        lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                                patience=5, min_lr=0.001)
 
-    lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
-                              patience=5, min_lr=0.001)
+        #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
+        model.fit_generator(train_generator,
+                            steps_per_epoch=120,
+                            epochs=epochs,
+                            validation_data=validation_generator,
+                            validation_steps=30,
+                            use_multiprocessing=False,
+                            workers=1,
+                            callbacks=[lr_scheduler, tboard, best_weight_checkpoint],
+                            verbose=1)
+    else:
 
-    #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
-    model.fit_generator(train_generator,
-                        steps_per_epoch=120,
-                        epochs=epochs,
-                        validation_data=validation_generator,
-                        validation_steps=30,
-                        use_multiprocessing=False,
-                        workers=1,
-                        callbacks=[lr_scheduler, tboard, current_checkpoint, best_weight_checkpoint, period_checkpoint],
-                        verbose=1)
+        #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
+        model.fit_generator(train_generator,
+                            steps_per_epoch=120,
+                            epochs=epochs,
+                            validation_data=validation_generator,
+                            validation_steps=30,
+                            use_multiprocessing=False,
+                            workers=1,
+                            callbacks=[tboard,  best_weight_checkpoint],
+                            verbose=1)
 
     model_name = 'model_' + now.strftime("%B-%d-%Y-%I:%M%p")
+    # train test read_tiff_stack, get newest model, rename best_training for augmentation or not, add precision measurements, check aug variable

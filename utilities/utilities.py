@@ -6,6 +6,7 @@ from os.path import join
 from PIL import Image
 import shutil
 import sys
+import logging
 
 def crop_numpy(dim1, dim2, dim3, vol):
     return vol[dim1:vol.shape[0] - dim1, dim2:vol.shape[1] - dim2, dim3:vol.shape[2] - dim3]
@@ -100,6 +101,46 @@ def read_tiff_stack(path):
         slice = np.array(img)
         images.append(slice)
 
+    return np.array(images)
+
+# get half of tif for train and test for now
+def read_tiff_stack_train(path):
+    img = Image.open(path)
+    images = []
+    train_num = int(img.n_frames*.5)
+    for i in range(train_num):
+        img.seek(i)
+        slice = np.array(img)
+        images.append(slice)
+
+    return np.array(images)
+
+# get half of tif for train and test for now
+def read_tiff_stack_val(path):
+    img = Image.open(path)
+    images = []
+    val_num = int(img.n_frames*.5)
+    for i in range(val_num, img.n_frames):
+
+        img.seek(i)
+        slice = np.array(img)
+        images.append(slice)
+
+    logging.info(np.array(images).shape)
+    return np.array(images)
+
+def read_tiff_stack_inference(path):
+    img = Image.open(path)
+    images = []
+
+    val_num = int(img.n_frames*.5)
+    for i in range(val_num, img.n_frames):
+
+        img.seek(i)
+        slice = np.array(img)
+        images.append(slice)
+
+    logging.info(np.array(images).shape)
     return np.array(images)
 
 

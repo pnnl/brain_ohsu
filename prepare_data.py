@@ -17,13 +17,13 @@ if __name__ == "__main__":
         # Validation directories
         data_original_path = base_path + "/data/validation/validation-original"
         data_set_path = base_path + "/data/validation/validation-set"
-
+        val = True
         # Default value is None
         nb_examples = None
         if len(sys.argv) > 2:
             nb_examples = int(sys.argv[2])
 
-        generate_data_set(data_original_path, data_set_path, nb_examples=nb_examples)
+        generate_data_set(data_original_path, data_set_path, val, nb_examples=nb_examples)
 
     # Generate data set by cropping out 64 length cubes from larger chunks for training
     elif sys.argv[1] == "generate_training_set":
@@ -31,13 +31,14 @@ if __name__ == "__main__":
         # Training directories
         data_original_path = base_path + "/data/training/training-original"
         data_set_path = base_path + "/data/training/training-set"
+        val = False
 
         # Default value is None
         nb_examples = None
         if len(sys.argv) > 2:
             nb_examples = int(sys.argv[2])
 
-        generate_data_set(data_original_path, data_set_path, nb_examples=nb_examples)
+        generate_data_set(data_original_path, data_set_path, val,  nb_examples=nb_examples)
 
     # Add edge labels to your labeled data
     elif sys.argv[1] == "process_labels":

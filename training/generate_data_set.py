@@ -42,7 +42,7 @@ def get_random_training(volume, label, i, nb_examples):
 
 
 
-def generate_data_set(data_original_path, data_set_path, nb_examples=None):
+def generate_data_set(data_original_path, data_set_path, val, nb_examples=None):
     # Get the directory for volumes and labels sorted
     volumes_path = sorted(get_dir(data_original_path + "/volumes"))
     labels_path = sorted(get_dir(data_original_path + "/labels"))
@@ -56,8 +56,13 @@ def generate_data_set(data_original_path, data_set_path, nb_examples=None):
 
     # Read in the chunks from training-original
     for i in range(len(volumes_path)):
-        volumes.append(read_tiff_stack(volumes_path[i]))
-        labels.append(read_tiff_stack(labels_path[i]))
+        if val:
+            volumes.append(read_tiff_stack_val(volumes_path[i]))
+            labels.append(read_tiff_stack_val(labels_path[i]))
+        else:
+            volumes.append(read_tiff_stack_train(volumes_path[i]))
+            labels.append(read_tiff_stack_train(labels_path[i]))
+
 
     if nb_examples is None:
         nb_examples = 100 * len(volumes_path)
