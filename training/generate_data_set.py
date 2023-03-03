@@ -1,5 +1,5 @@
 import random
-from models import input_dim, normal
+from models import input_dim
 from utilities.utilities import *
 
 oversample_foreground_percent = .9
@@ -7,7 +7,7 @@ oversample_foreground_percent = .9
 def get_do_oversample(i, nb_examples):
         return not i < round(nb_examples * (1 - oversample_foreground_percent))
 
-def get_random_training(volume, label, i, nb_examples):
+def get_random_training(volume, label, i, nb_examples, normal):
     # Get a random corner to cut out a chunk for the training-set
 
     # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L294
@@ -42,7 +42,7 @@ def get_random_training(volume, label, i, nb_examples):
 
 
 
-def generate_data_set(data_original_path, data_set_path, val, nb_examples=None):
+def generate_data_set(data_original_path, data_set_path, normal = True, nb_examples=None):
     # Get the directory for volumes and labels sorted
     volumes_path = sorted(get_dir(data_original_path + "/volumes"))
     labels_path = sorted(get_dir(data_original_path + "/labels"))
@@ -56,12 +56,8 @@ def generate_data_set(data_original_path, data_set_path, val, nb_examples=None):
 
     # Read in the chunks from training-original
     for i in range(len(volumes_path)):
-        if val:
-            volumes.append(read_tiff_stack_val(volumes_path[i]))
-            labels.append(read_tiff_stack_val(labels_path[i]))
-        else:
-            volumes.append(read_tiff_stack_train(volumes_path[i]))
-            labels.append(read_tiff_stack_train(labels_path[i]))
+        volumes.append(read_tiff_stack(volumes_path[i]))
+        labels.append(read_tiff_stack(labels_path[i]))
 
 
     if nb_examples is None:
@@ -71,7 +67,7 @@ def generate_data_set(data_original_path, data_set_path, val, nb_examples=None):
     for i in range(nb_examples):
 
         ind = i % len(volumes_path)
-        volume_chunk, label_chunk = get_random_training(volumes[ind], labels[ind], i, nb_examples)
+        volume_chunk, label_chunk = get_random_training(volumes[ind], labels[ind], i, nb_examples, normal = normal)
 
         write_tiff_stack(volume_chunk, data_set_path + "/volumes/volume-" + str(i) + ".tiff")
         write_tiff_stack(label_chunk, data_set_path + "/labels/label-" + str(i) + ".tiff")

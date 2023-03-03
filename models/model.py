@@ -8,8 +8,6 @@ from tensorflow.keras.optimizers import Adam
 
 input_dim = 64
 output_dim = 36
-normal = False
-
 
 
 def create_weighted_binary_crossentropy(axon_weight, background_weight, artifact_weight, edge_weight):

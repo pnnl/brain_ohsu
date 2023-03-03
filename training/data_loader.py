@@ -1,23 +1,21 @@
-from models.model import input_dim, output_dim, normal
+from models.model import input_dim, output_dim
 from utilities.utilities import *
 import random
 
 
 # Load the data into
-def load_data(data_path, nb_examples=None):
+def load_data(data_path, nb_examples=None, normal = False):
 
     volumes_folder_path = data_path + "/volumes"
     labels_folder_path = data_path + "/labels"
 
     volumes_path = get_dir(volumes_folder_path)
     labels_path = get_dir(labels_folder_path)
-    print(volumes_path)
-    print(labels_path)
 
     assert len(labels_path) == len(volumes_path)
 
     total_length = len(labels_path)
-
+    
     if nb_examples is None:
         nb_examples = total_length
     else:

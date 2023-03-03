@@ -90,7 +90,10 @@ def loss_inference(input_folder, output_folder):
     
 
     file_names = get_dir(os.path.join(input_folder, "labels"))
-    y_true_flat = read_tiff_stack_inference(file_names[0])
+    y_true_flat = np.array([])
+    for i in range(len(file_names)):
+        y_true_temp = read_tiff_stack(file_names[i])
+        y_true_flat = np.concatenate([y_true_flat, y_true_temp])
 
     background = np.copy(y_true_flat)
     background[background == 2] = 0
@@ -138,8 +141,6 @@ def loss_inference(input_folder, output_folder):
     output_dict["axon_precision"] = loss
     loss = axon_recall(tensor1, tensor2)
     output_dict["axon_recall"] = loss
-
-
     return output_dict
 
 
@@ -186,7 +187,7 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
     #if input is a tif file instead of stacked images, convert to stacked images
     if tif_input == True:
         file_names = get_dir(os.path.join(input_folder, f"volumes"))
-        vol= read_tiff_stack_inference(file_names[0])
+        vol= read_tiff_stack(file_names[0])
         write_folder_stack(vol, os.path.join(input_folder, f"slices_{name}"))
     # Name of folder
     folder_name = os.path.basename(os.path.join(input_folder, f"slices_{name}"))

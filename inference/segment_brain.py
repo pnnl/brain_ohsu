@@ -92,8 +92,9 @@ a batch of chunks. To conserve memory, the function will load sections of the br
 def segment_brain_normal(input_folder, output_folder, model, name, tif_input = True):
     if tif_input == True:
         file_names = get_dir(os.path.join(input_folder, "volumes"))
-        vol= read_tiff_stack_inference(file_names[0])
-        write_folder_stack(vol, os.path.join(input_folder, f"slices_{name}"))
+        for i in range(len(file_names)):
+            vol= read_tiff_stack(file_names[i])
+            write_folder_stack(vol, os.path.join(input_folder, f"slices_{name}"))
 
     # Name of folder
     folder_name = os.path.basename(os.path.join(input_folder, f"slices_{name}"))

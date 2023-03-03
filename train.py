@@ -4,23 +4,23 @@ from models.model import get_net
 import tensorflow as tf
 import os
 from training import load_data, VolumeDataGenerator
-from models import input_dim, normal
+from models import input_dim
 
 if __name__ == "__main__":
 
     base_path = os.path.abspath(__file__ + "/..")
-
+    normal = False
     batch_size = 6
     epochs = 50
 
     training_path = base_path + "/data/training/training-set"
     validation_path = base_path + "/data/validation/validation-set"
+    test_path = base_path + "/data/test/test-set"
 
-    x_train, y_train = load_data(training_path)
-    x_validation, y_validation = load_data(validation_path)
+    x_train, y_train = load_data(training_path, normal = normal)
+    x_validation, y_validation = load_data(validation_path, normal = True)
+    x_test, y_test = load_data(test_path, normal = True)
 
-    print("Loaded Data")
-    print(normal)
 
     datagen = VolumeDataGenerator(
         horizontal_flip=False,
@@ -28,11 +28,22 @@ if __name__ == "__main__":
         depth_flip=False,
         min_max_normalization=True,
         scale_range=0.1,
-        scale_constant_range=0.2
+        scale_constant_range=0.2,
+        normal = normal
     )
 
+    datagen_no_flip = VolumeDataGenerator(
+        horizontal_flip=False,
+        vertical_flip=False,
+        depth_flip=False,
+        min_max_normalization=True,
+        normal = True
+    )
+
+
     train_generator = datagen.flow(x_train, y_train, batch_size)
-    validation_generator = datagen.flow(x_validation, y_validation, batch_size)
+    validation_generator = datagen_no_flip.flow(x_validation, y_validation, batch_size)
+    test_generator = datagen_no_flip.flow(x_test, y_test, batch_size)
 
     now = datetime.now()
     logdir = base_path + "/data/tf-logs/" + now.strftime("%B-%d-%Y-%I:%M%p") + "/"
@@ -66,6 +77,7 @@ if __name__ == "__main__":
                             workers=1,
                             callbacks=[lr_scheduler, tboard, best_weight_checkpoint],
                             verbose=1)
+        
     else:
 
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
@@ -81,3 +93,6 @@ if __name__ == "__main__":
 
     model_name = 'model_' + now.strftime("%B-%d-%Y-%I:%M%p")
     # train test read_tiff_stack, get newest model, rename best_training for augmentation or not, add precision measurements, check aug variable
+    scores = model.evaluate_generator(test_generator,
+                            callbacks=[tboard,  best_weight_checkpoint],
+                            verbose=1)

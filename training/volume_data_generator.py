@@ -9,7 +9,7 @@ from batchgenerators.augmentations.utils import create_zero_centered_coordinate_
     elastic_deform_coordinates_2
 from batchgenerators.augmentations.crop_and_pad_augmentations import random_crop as random_crop_aug
 from batchgenerators.augmentations.crop_and_pad_augmentations import center_crop as center_crop_augfrom 
-from models.model import input_dim, output_dim, normal
+from models.model import input_dim, output_dim
 from utilities.utilities import *
 offset = (input_dim - output_dim)//2
 
@@ -28,7 +28,8 @@ class VolumeDataGenerator(Sequence):
                  zoom_range=0.0,
                  horizontal_flip=False,
                  vertical_flip=False,
-                 depth_flip=False):
+                 depth_flip=False,
+                 normal = False):
 
         self.scale_constant_range = scale_constant_range
         self.scale_range = scale_range
@@ -43,6 +44,7 @@ class VolumeDataGenerator(Sequence):
         self.horizontal_flip = horizontal_flip
         self.vertical_flip = vertical_flip
         self.depth_flip = depth_flip
+        self.normal = normal
 
     def _shift_img(self, image, dx, dy):
 
@@ -282,7 +284,7 @@ class VolumeDataGenerator(Sequence):
     def flow(self, x, y, batch_size):
         while True:
             x_gen = np.zeros((batch_size,) + x.shape[1:])
-            if normal == True:
+            if self.normal == True:
                 y_gen = np.zeros((batch_size,) + y.shape[1:])
             else:
                 y_gen = np.zeros((batch_size,) + np.copy(crop_numpy_batch(offset, offset, offset, y)).shape[1:])
@@ -299,7 +301,7 @@ class VolumeDataGenerator(Sequence):
                 x_copy = np.copy(x[ind])
                 y_copy = np.copy(y[ind])
                 preprocess_vol = self._preprocess_vol(x_copy)
-                if normal == True:
+                if self.normal == True:
                     x_gen[counter] = self._transform_vol(preprocess_vol)
                     y_gen[counter] = self._transform_vol(y_copy)
                 else:
