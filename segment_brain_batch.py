@@ -15,12 +15,12 @@ if __name__ == "__main__":
             raise Exception(input_folder + " is not a directory. Inputs must be a folder of files. Please refer to readme for more info")
 
     # Load the network
-    weights_path = base_path + "/data/model-weights/best_weights_checkpoint_normal_false.hdf5"
+    weights_path = base_path + "/data/model-weights/0409-255.hdf5"
 
     model = get_net()
     model.load_weights(weights_path)
     overlap_var = 1.0
-    guass = True
+    guass = False
     extra_name = ""
     name_folders = f'_overlap_{overlap_var}_{os.path.basename(weights_path)}_guass_{guass}_{extra_name}'
 

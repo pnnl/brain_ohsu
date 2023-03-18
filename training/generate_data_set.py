@@ -1,6 +1,8 @@
 import random
 from models import input_dim
 from utilities.utilities import *
+import os
+import shutil
 
 oversample_foreground_percent = .9
 # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L204
@@ -46,6 +48,13 @@ def generate_data_set(data_original_path, data_set_path, normal = True, nb_examp
     # Get the directory for volumes and labels sorted
     volumes_path = sorted(get_dir(data_original_path + "/volumes"))
     labels_path = sorted(get_dir(data_original_path + "/labels"))
+
+
+    for folder_name in ["/labels", "/volumes"]: 
+        dirpath = data_original_path + folder_name
+        if os.path.exists(dirpath) and os.path.isdir(dirpath):
+            shutil.rmtree(dirpath)
+        os.mkdir(dirpath)
 
     if len(volumes_path) != len(labels_path):
         raise Exception("Volumes and labels folders must have the same number of items for there to be a 1 to 1 matching")

@@ -5,16 +5,17 @@ import tensorflow as tf
 import os
 from training import load_data, VolumeDataGenerator
 from models import input_dim
+from utilities.utilities import *
 
 if __name__ == "__main__":
 
     base_path = os.path.abspath(__file__ + "/..")
-    normal = False
+    normal = sys.argv[1]
     batch_size = 6
     epochs = 50
 
-    training_path = base_path + "/data/training/training-set"
-    validation_path = base_path + "/data/validation/validation-set"
+    training_path = base_path + f"/data/training/training-set_normal_{normal}"
+    validation_path = base_path + f"/data/validation/validation-set_normal_{normal}"
     test_path = base_path + "/data/test/test-set"
 
     x_train, y_train = load_data(training_path, normal = normal)
@@ -50,14 +51,14 @@ if __name__ == "__main__":
 
     tboard = TensorBoard(log_dir=logdir, histogram_freq=0, write_graph=True, write_images=False)
 
-    current_checkpoint = ModelCheckpoint(filepath=base_path + '/data/model-weights/latest_model_false.hdf5', verbose=1)
-    period_checkpoint = ModelCheckpoint(base_path + '/data/model-weights/weights{epochs:03d}_false.hdf5', period=20)
-    best_weight_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/best_weights_checkpoint_normal_false.hdf5',
+    current_checkpoint = ModelCheckpoint(filepath=base_path + '/data/model-weights/latest_model_{normal}.hdf5', verbose=1)
+    period_checkpoint = ModelCheckpoint(base_path + '/data/model-weights/weights{epochs:03d}_{normal}.hdf5', period=20)
+    best_weight_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/best_weights_checkpoint_normal_{normal}.hdf5',
                                              verbose=1, save_best_only=True)
 
     
 
-    weights_path = base_path + "/data/model-weights/original_best_weights.hdf5"
+    weights_path = base_path + "/data/model-weights/0409-255.hdf5.hdf5"
 
     model = get_net()
     # This will do transfer learning and start the model off with our current best model.
@@ -88,7 +89,7 @@ if __name__ == "__main__":
                             validation_steps=30,
                             use_multiprocessing=False,
                             workers=1,
-                            callbacks=[tboard,  best_weight_checkpoint],
+                            callbacks=[tboard, best_weight_checkpoint],
                             verbose=1)
 
     model_name = 'model_' + now.strftime("%B-%d-%Y-%I:%M%p")

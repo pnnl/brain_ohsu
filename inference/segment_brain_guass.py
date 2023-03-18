@@ -90,10 +90,9 @@ def loss_inference(input_folder, output_folder):
     
 
     file_names = get_dir(os.path.join(input_folder, "labels"))
-    y_true_flat = np.array([])
-    for i in range(len(file_names)):
-        y_true_temp = read_tiff_stack(file_names[i])
-        y_true_flat = np.concatenate([y_true_flat, y_true_temp])
+
+    #only works for one tif stack
+    y_true_flat = read_tiff_stack(file_names[0])
 
     background = np.copy(y_true_flat)
     background[background == 2] = 0
@@ -158,7 +157,7 @@ def write_folder_section(output_folder, file_names,  section_seg):
 
 def write_total(output_folder, file_names, output_total, agg_gauss_total):
     seg = output_total/agg_gauss_total
-    pd.DataFrame(seg[10:15,:,:].reshape(-1,  seg.shape[-1])).to_csv('values_'+ str(overlap_var) + '.csv')
+    #pd.DataFrame(seg[10:15,:,:].reshape(-1,  seg.shape[-1])).to_csv('values_'+ str(overlap_var) + '.csv')
     
     # Write the segmentation into the output_folder
     for slice_index in range(len(file_names)):
@@ -271,7 +270,7 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
     #pd.DataFrame(ones_total[10,:,:]).to_csv('ones_total_'+ str(overlap_var) + '.csv')
     output_total /= agg_gauss_total
     write_folder_section(output_folder, file_names,  output_total)
-    pd.DataFrame(ones_total.reshape(-1,  ones_total.shape[-1])).to_csv('values_'+ str(overlap_var) + '.csv')
+    #pd.DataFrame(ones_total.reshape(-1,  ones_total.shape[-1])).to_csv('values_'+ str(overlap_var) + '.csv')
     # if labels exist, get the accuracy
     if tif_input == True:
         output_dict =loss_inference(input_folder, output_folder)
@@ -376,7 +375,7 @@ def helper_segment_section(model, section, gaussian_importance_map, overlap_var)
         # Place the predictions in the segmentation
         for j in range(len(batch_coords)):
             (z, x, y) = batch_coords[j] + dim_offset
-            print(z,x,y)
+            #print(z,x,y)
 
             # multiple by guassian_importance map
             output[j] *=  gaussian_importance_map
@@ -385,7 +384,7 @@ def helper_segment_section(model, section, gaussian_importance_map, overlap_var)
             # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/network_architecture/neural_network.py#L394
             aggregated_nb_of_predictions[z:z + output_dim, x:x + output_dim, y:y + output_dim]  += gaussian_importance_map
             aggregated_ones[z:z + output_dim, x:x + output_dim, y:y + output_dim]  += np.ones_like(gaussian_importance_map)
-            print(np.unique(aggregated_ones, return_counts = True))
+            #print(np.unique(aggregated_ones, return_counts = True))
 
 
 
