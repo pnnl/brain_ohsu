@@ -1,5 +1,5 @@
-data/*
-*.pyc
-*.out
-*.txt
-*.csv
+*.tiff
+*.png
+*.jpg
+data/validation/validation-set/volumes/*
+data*

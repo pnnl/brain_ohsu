@@ -131,16 +131,24 @@ def loss_inference(input_folder, output_folder):
             vol.append(img)
     output_dict ={}
     y_pred = np.array(vol)
+    # add first dimension 1 (normally batch number)
     tensor1 = tf.convert_to_tensor(np.expand_dims(y_true, axis=0))
-    print(y_pred.shape)
+
     print(y_true.shape)
+    print(y_pred.shape)
+    # add first dimension 1(normally batch number) and last dimension 4 for most
     tensor2 = tf.convert_to_tensor(np.expand_dims(y_pred, axis=(0, 4)))
+    print(tf.shape(tensor1))
+    print(tf.shape(tensor2))
     loss = adjusted_accuracy(tensor1, tensor2)
     output_dict["adjusted_accuracy"] = loss
     loss = axon_precision(tensor1, tensor2)
     output_dict["axon_precision"] = loss
     loss = axon_recall(tensor1, tensor2)
     output_dict["axon_recall"] = loss
+    loss = f1_score(tensor1, tensor2)
+    output_dict["f1_score"] = loss
+    
     return output_dict
 
 
