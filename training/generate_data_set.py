@@ -49,12 +49,16 @@ def generate_data_set(data_original_path, data_set_path, normal = True, nb_examp
     volumes_path = sorted(get_dir(data_original_path + "/volumes"))
     labels_path = sorted(get_dir(data_original_path + "/labels"))
 
+    if not os.path.exists(data_set_path):
+        os.mkdir(data_set_path)
 
     for folder_name in ["/labels", "/volumes"]: 
-        dirpath = data_original_path + folder_name
-        if os.path.exists(dirpath) and os.path.isdir(dirpath):
+        dirpath = data_set_path + folder_name
+        print(dirpath)
+        if os.path.exists(dirpath):
             shutil.rmtree(dirpath)
-        os.mkdir(dirpath)
+        if not os.path.exists(dirpath):
+            os.mkdir(dirpath)
 
     if len(volumes_path) != len(labels_path):
         raise Exception("Volumes and labels folders must have the same number of items for there to be a 1 to 1 matching")

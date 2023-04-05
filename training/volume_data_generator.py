@@ -65,10 +65,10 @@ class VolumeDataGenerator(Sequence):
     def augment_spatial(self, data, seg, patch_size, patch_center_dist_from_border=30,
                         do_elastic_deform=True, alpha=(0., 1000.), sigma=(10., 13.),
                         do_rotation=True, angle_x=(0, 2 * np.pi), angle_y=(0, 2 * np.pi), angle_z=(0, 2 * np.pi),
-                        do_scale=True, scale=(0.75, 1.25), border_mode_data='nearest', border_cval_data=0, order_data=3,
-                        border_mode_seg='nearest', border_cval_seg=0, order_seg=3, random_crop=False, p_el_per_sample=1,
-                        p_scale_per_sample=1, p_rot_per_sample=1, independent_scale_for_each_axis=False,
-                        p_rot_per_axis: float = 1, p_independent_scale_per_axis: int = 1):
+                        do_scale=False, scale=(0.75, 1.25), border_mode_data='nearest', border_cval_data=0, order_data=3,
+                        border_mode_seg='nearest', border_cval_seg=0, order_seg=3, random_crop=False, p_el_per_sample=.5,
+                        p_scale_per_sample=0, p_rot_per_sample=.5, independent_scale_for_each_axis=False,
+                        p_rot_per_axis: float = .5, p_independent_scale_per_axis: int = .5):
         dim = len(patch_size)
         
         seg_result = None

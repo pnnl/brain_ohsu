@@ -4,7 +4,7 @@ import random
 
 
 # Load the data into
-def load_data(data_path, nb_examples=None, normal = False):
+def load_data(data_path, nb_examples=None, normal =  True):
 
     volumes_folder_path = data_path + "/volumes"
     labels_folder_path = data_path + "/labels"

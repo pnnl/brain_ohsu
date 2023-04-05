@@ -133,6 +133,7 @@ def loss_inference(input_folder, output_folder):
     y_pred = np.array(vol)
     tensor1 = tf.convert_to_tensor(np.expand_dims(y_true, axis=0))
     print(y_pred.shape)
+    print(y_true.shape)
     tensor2 = tf.convert_to_tensor(np.expand_dims(y_pred, axis=(0, 4)))
     loss = adjusted_accuracy(tensor1, tensor2)
     output_dict["adjusted_accuracy"] = loss
@@ -273,6 +274,8 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
     #pd.DataFrame(ones_total.reshape(-1,  ones_total.shape[-1])).to_csv('values_'+ str(overlap_var) + '.csv')
     # if labels exist, get the accuracy
     if tif_input == True:
+        print(output_folder)
+        print(input_folder)
         output_dict =loss_inference(input_folder, output_folder)
 
         with open(output_folder + "/" + f"dict{name}.csv", 'w') as csv_file:  

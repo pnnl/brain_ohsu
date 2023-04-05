@@ -5,7 +5,8 @@ from utilities.utilities import *
 if __name__ == "__main__":
     normal = sys.argv[2]
     base_path = os.path.abspath(__file__ + "/..")
-
+    print(sys.argv[1])
+    print(sys.argv[2])
     # Must include operation being done.
     # e.g. generate_data_set
     if len(sys.argv) < 2:
@@ -16,12 +17,12 @@ if __name__ == "__main__":
 
         # Validation directories
         data_original_path = base_path + f"/data/validation/validation-original"
-        data_set_path = base_path + "/data/validation/validation-set_normal_{normal}"
+        data_set_path = base_path + f"/data/validation/validation-set_normal_{normal}"
 
         # Default value is None
         nb_examples = None
-        if len(sys.argv) > 2:
-            nb_examples = int(sys.argv[2])
+        if len(sys.argv) > 3:
+            nb_examples = int(sys.argv[3])
 
         generate_data_set(data_original_path, data_set_path, normal = normal, nb_examples=nb_examples)
 
@@ -30,12 +31,12 @@ if __name__ == "__main__":
 
         # Training directories
         data_original_path = base_path + "/data/training/training-original"
-        data_set_path = base_path + "/data/training/training-set_normal_{normal}"
+        data_set_path = base_path + f"/data/training/training-set_normal_{normal}"
 
         # Default value is None
         nb_examples = None
-        if len(sys.argv) > 2:
-            nb_examples = int(sys.argv[2])
+        if len(sys.argv) > 3:
+            nb_examples = int(sys.argv[3])
 
         generate_data_set(data_original_path, data_set_path, normal = normal,  nb_examples=nb_examples)
 
@@ -44,12 +45,12 @@ if __name__ == "__main__":
 
         # Training directories
         data_original_path = base_path + "/data/training/test-original"
-        data_set_path = base_path + "/data/training/test-set_normal_{normal}"
+        data_set_path = base_path + f"/data/training/test-set_normal_{normal}"
 
         # Default value is None
         nb_examples = None
-        if len(sys.argv) > 2:
-            nb_examples = int(sys.argv[2])
+        if len(sys.argv) > 3:
+            nb_examples = int(sys.argv[3])
 
         generate_data_set(data_original_path, data_set_path, normal = normal,  nb_examples=nb_examples)
 
