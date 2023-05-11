@@ -68,7 +68,8 @@ def read_folder_section(path, start_index, end_index):
 
 def write_folder_section(output_folder, file_names, section_index, section_seg):
     # Write the segmentation into the output_folder
-    for slice_index in range(dim_offset, input_dim - dim_offset):
+    # since not add dim_off to the filesname at both beginning and end, don't need to subtract here either
+    for slice_index in range(0, input_dim): #range(dim_offset, input_dim - dim_offset):
         input_file_name = file_names[section_index + slice_index]
 
         output_file_name = "seg-" + os.path.basename(input_file_name)
@@ -122,8 +123,9 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input = T
     draw_progress_bar(0, eta)
     # Each iteration of loop will cut a section from slices i to i + input_dim and run helper_segment_section
 
-    section_index = -dim_offset
-    while section_index <= len(file_names) - input_dim + dim_offset:
+    # not adding a  dim_off set number of slices to the beginning and end 
+    section_index = 0 #-dim_offset
+    while section_index <= len(file_names) - input_dim:  #+ dim_offset:
 
         # Read section of folder
         section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), section_index, section_index + input_dim).astype('float32')
@@ -148,7 +150,8 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input = T
         section_index += output_dim
 
     # Fill in slices in the end
-    end_aligned = len(file_names) - input_dim + dim_offset
+    # since not adding dim_off padding, don't need to add here either
+    end_aligned = len(file_names) - input_dim  #+ dim_offset
 
     # Read section of folder
     section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), end_aligned, end_aligned + input_dim).astype('float32')
@@ -168,6 +171,9 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input = T
             writer = csv.writer(csv_file)
             for key, value in output_dict.items():
                 writer.writerow([key, value])
+            
+            for key, value in output_dict.items():
+                writer.writerow([value])
     draw_progress_bar(1, total_time)
     print("\n")
 
@@ -193,12 +199,14 @@ Helper function for segment_brain. Takes in a section of the brain
 def helper_segment_section(model, section):
     # List of bottom left corner coordinate of all input chunks in the section
     coords = []
-
+    # remove the dim_offset padding normally used to predict the full image with padding of 0 
     # Pad the section to account for the output dimension being smaller the input dimension
     # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
     #                                 (dim_offset, dim_offset)), 'constant', constant_values=(0, 0))
-    temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
-                                    (dim_offset, dim_offset)), 'edge')
+    # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
+    #                                 (dim_offset, dim_offset)), 'edge')
+    temp_section = np.pad(section, ((0, 0), (0, 0),
+                                    (0, 0)), 'edge')
 
     # Add most chunks aligned with top left corner
     for x in range(0, temp_section.shape[1] - input_dim, output_dim):
@@ -257,4 +265,4 @@ def helper_segment_section(model, section):
             seg[z:z + output_dim, x:x + output_dim, y:y + output_dim] = output[j]
 
     cropped_seg = seg[:, dim_offset: dim_offset + section.shape[1], dim_offset: dim_offset + section.shape[2]]
-    return cropped_seg
+    return seg #cropped_seg

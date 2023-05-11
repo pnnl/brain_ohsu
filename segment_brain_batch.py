@@ -3,31 +3,70 @@ from models import *
 import sys
 import os
 import shutil
+import itertools
 
 if __name__ == "__main__":
+        # Load the network
+    model_weight_list = [
+
+    #all changes variations, .5 background, 200 images per tif for all , nearest means using nearest for interpolation instead of 0 for labels
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_flip_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_flip_rot_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_nearest_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_rot_nearest_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_rot_normal_False.hdf5',
+
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_flip_normal_False.hdf5', 
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_flip_rot_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_nearest_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_rot_nearest_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_rot_normal_False.hdf5',
+
+
+    #only some changes at a time, .5 background for all
+
+    '/data/model-weights/best_weights_checkpoint_orig_model_flip_1X_aug_200_50_percent_only_normal_False.hdf5', # includes rot, 200 images, not actually flipping
+    '/data/model-weights/best_weights_checkpoint_orig_model_flip_1X_aug_200_only_normal_False.hdf5', # includes rot, 200 images, not actually flipping, 30
+    '/data/model-weights/best_weights_checkpoint_aug_50_only_normal_False.hdf5', # includes rot
+    '/data/model-weights/best_weights_checkpoint_aug_20_only_normal_False.hdf5', # includes rot
+    '/data/model-weights/best_weights_checkpoint_orig_model_flip_1X_lr_reduce_only_normal_False.hdf5', #not actually flipping,
+    '/data/model-weights/best_weights_checkpoint_orig_model_flip_1X_foreground_only_normal_False.hdf5',#not actually flipping,
+
+    #best trailmap adjustments
+
+
+    
+    '/data/model-weights/best_weights_checkpoint_orig_model_200_preprocess_after_aug_normal_normal_True.hdf5', # not really aug
+    '/data/model-weights/best_weights_checkpoint_orig_model_200_aug_background_decreased_normal_True.hdf5', # not really aug
+    '/data/model-weights/best_weights_checkpoint_flip_orig_model_normal_True.hdf5',
+    '/data/model-weights/best_weights_checkpoint_orig_model_flipped_background_decreased_normal_True.hdf5',
+    '/data/model-weights/best_weights_checkpoint_orig_model_normal_True.hdf5',
+    '/data/model-weights/best_weights_checkpoint_orig_model_background_decreased_normal_True.hdf5',
+    "/data/model-weights/trailmap_model.hdf5",
+
+    ]
+
+    image_path  =  [  '/qfs/projects/brain_ohsu/TRAIL_MAP/data/validation/validation-original',  '/qfs/projects/brain_ohsu/TRAIL_MAP/data/test/test-original']
+    combos = list(itertools.product(image_path, model_weight_list))
+
+    input_batch, model_weight   = combos[int(sys.argv[-1])]
 
     base_path = os.path.abspath(__file__ + "/..")
 
-    input_batch = sys.argv[1:]
+    input_batch = [input_batch]
     # Verify each path is a directory
     for input_folder in input_batch:
         if not os.path.isdir(input_folder):
             raise Exception(input_folder + " is not a directory. Inputs must be a folder of files. Please refer to readme for more info")
 
-    # Load the network
-    #weights_path = base_path + "/data/model-weights/trailmap_model.hdf5" # trailmap 
-    #weights_path = base_path + '/data/model-weights/0409-255.hdf5' # improved model 
-    #weights_path = base_path + '/data/model-weights/best_weights_checkpoint_normal_background_half_100_orig_normal_True.hdf5' # augment, etc. at 20%
-    #weights_path = base_path + '/data/model-weights/best_weights_checkpoint_normal_flip_orig_model_normal_True.hdf5' # normal, but with background weight .5?
-    #weights_path = base_path + '/data/model-weights/best_weights_checkpoint_normal_false_orig_normal_False.hdf5' # augment, etc. at 20%
-    #weights_path = base_path + '/data/model-weights/best_weights_checkpoint_normal_flip_orig_model_normal_True.hdf5' # normal, but with background weight .5?
-    weights_path = base_path + '/data/model-weights/best_weights_checkpoint_normal_orig_model_normal_True.hdf5' # augment 50%, more from backgroun, lr schedule
-    #weights_path = base_path + '/data/model-weights/best_weights_checkpoint_normal_true_background_half_normal_True.hdf5' # normal true, flip vertical,  flip horizontal
-    #weights_path = base_path + '/data/model-weights/best_weights_checkpoint_normal_true_orig_model_200_normal_True.hdf5' # normal true, no modifications
+
+    weights_path = base_path +  model_weight
 
     model = get_net()
     model.load_weights(weights_path)
-    overlap_var = 1.0
+    overlap_var = 1.2
     guass = False
     extra_name = ""
     name_folders = f'_overlap_{overlap_var}_{os.path.basename(weights_path)}_guass_{guass}_{extra_name}'

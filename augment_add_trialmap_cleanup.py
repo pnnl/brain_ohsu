@@ -237,12 +237,12 @@ def generate_data_set(data_original_path, data_set_path, nb_examples=10):
 
         ind = i % len(volumes_path)
         volume_chunk, label_chunk = get_random_training(volumes[ind], labels[ind], i, nb_examples)
-        # # adding in to test
-        # # removing everything with  makes the scaling spread out into negatives
-        # # volume_chunk[:, :, :] = 0.0
-        # volume_chunk[:, 50:52, 50:52] = 10000.0
-        # # label_chunk[:, :, :] = 0
-        # label_chunk[:, 50:52, 50:52] =2
+        # adding in to test
+        # removing everything with  makes the scaling spread out into negatives
+        # volume_chunk[:, :, :] = 0.0
+        volume_chunk[:, 50:52, 50:52] = 10000.0
+        # label_chunk[:, :, :] = 0
+        label_chunk[:, 50:52, 50:52] =2
         write_tiff_stack(volume_chunk, data_set_path + "/volumes/volume-" + str(i) + ".tiff")
         write_tiff_stack(label_chunk, data_set_path + "/labels/label-" + str(i) + ".tiff")
 
@@ -353,8 +353,8 @@ from batchgenerators.augmentations.crop_and_pad_augmentations import center_crop
 # data and seg is just one
 # modify channels so it's the last -1 number
 def augment_spatial(data, seg, patch_size, patch_center_dist_from_border=30,
-                    do_elastic_deform=True, alpha=(0., 1000.), sigma=(10., 13.),
-                    do_rotation=True, angle_x=(0, 2 * np.pi), angle_y=(0, 2 * np.pi), angle_z=(0, 2 * np.pi),
+                    do_elastic_deform=True, alpha=( 1000., 1000.), sigma=(13., 13.),
+                    do_rotation=False, angle_x=(0, 2 * np.pi), angle_y=(0, 2 * np.pi), angle_z=(0, 2 * np.pi),
                     do_scale=False, scale=(0.75, 1.25), border_mode_data='nearest', border_cval_data=0, order_data=3,
                       border_mode_seg='constant', border_cval_seg=0, order_seg=0,  random_crop=False, p_el_per_sample=1,
                     p_scale_per_sample=1, p_rot_per_sample=1, independent_scale_for_each_axis=False,
@@ -465,8 +465,8 @@ from typing import Tuple
 
 class VolumeDataGenerator(Sequence):
     def __init__(self,
-                 samplewise_center=True,
-                 samplewise_std_normalization=True,
+                 samplewise_center=False,
+                 samplewise_std_normalization=False,
                  min_max_normalization=False,
                  scale_constant_range=0.0,
                  scale_range=0.0,
@@ -477,7 +477,8 @@ class VolumeDataGenerator(Sequence):
                  zoom_range=0.0,
                  horizontal_flip=False,
                  vertical_flip=False,
-                 depth_flip=False):
+                 depth_flip=False,
+                 normal = False):
 
         self.scale_constant_range = scale_constant_range
         self.scale_range = scale_range
@@ -676,6 +677,7 @@ class VolumeDataGenerator(Sequence):
             counter = 0
             #for each image
             for i in inds[:batch_size]:
+                print(i)
                 ind = i % x.shape[0]
                 self._set_params()
                 x_copy = np.copy(x[ind])
@@ -685,18 +687,24 @@ class VolumeDataGenerator(Sequence):
                 #preprocess_vol = self.augment_gaussian_blur(preprocess_vol)
                 write_tiff_stack(preprocess_vol[:,:,:, 0].astype(float), data_set_path + "/look/processed-input" + str(i) + ".tiff")
                 write_tiff_stack(y_copy[:,:,:, 0].astype(float), data_set_path + "/look/orig-label" + str(i) + ".tiff")
+                write_tiff_stack(np.sum(y_copy[:,:,:, :].astype(float), -1), data_set_path + "/look/orig-label-all-info" + str(i) + ".tiff")
+                print("min x")
                 print(x_copy.min())
                 print(x_copy.max())
                 x2, y2 = augment_spatial(x_copy, y_copy, patch_size = preprocess_vol.squeeze().shape)
+                print("augmnet")
                 print(x2.min())
                 print(x2.max())
                 x2 = self._preprocess_vol(x2)
+                print("final")
                 print(x2.min())
                 print(x2.max())
+                print("preprcoess")
                 print(preprocess_vol.min())
                 print(preprocess_vol.max())
                 write_tiff_stack(x2[:,:,:, 0], data_set_path + "/look/augment_spatial-input-" + str(i) + ".tiff")
                 write_tiff_stack(y2[:,:,:, 0].astype(float), data_set_path + "/look/augment_spatial-label" + str(i) + ".tiff")
+                write_tiff_stack(np.sum(y2[:,:,:, :].astype(float), -1), data_set_path + "/look/augment_spatial-label-all-info" + str(i) + ".tiff")
                 # keep offset zero until after spatial transformation
                 
                 y2 = np.copy(crop_numpy(offset, offset, offset, y2))
@@ -704,6 +712,7 @@ class VolumeDataGenerator(Sequence):
                 x_gen[counter] = x2
                 y_gen[counter] = y2
                 counter += 1
+            print("")
             yield x_gen, y_gen
 
 x_validation, y_validation = load_data(validation_path)

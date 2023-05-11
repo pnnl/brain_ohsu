@@ -131,24 +131,31 @@ def loss_inference(input_folder, output_folder):
             vol.append(img)
     output_dict ={}
     y_pred = np.array(vol)
+    # only predict with dim offset removed (so not added extra padding)
+    y_pred = y_pred[dim_offset:-dim_offset,dim_offset:-dim_offset,dim_offset:-dim_offset]
+    y_true = y_true[dim_offset:-dim_offset,dim_offset:-dim_offset,dim_offset:-dim_offset,:]
+
     # add first dimension 1 (normally batch number)
     tensor1 = tf.convert_to_tensor(np.expand_dims(y_true, axis=0))
-
-    print(y_true.shape)
-    print(y_pred.shape)
     # add first dimension 1(normally batch number) and last dimension 4 for most
     tensor2 = tf.convert_to_tensor(np.expand_dims(y_pred, axis=(0, 4)))
-    print(tf.shape(tensor1))
-    print(tf.shape(tensor2))
+
     loss = adjusted_accuracy(tensor1, tensor2)
-    output_dict["adjusted_accuracy"] = loss
+    output_dict["adjusted_accuracy"] = loss.numpy()
     loss = axon_precision(tensor1, tensor2)
-    output_dict["axon_precision"] = loss
+    output_dict["axon_precision"] = loss.numpy()
     loss = axon_recall(tensor1, tensor2)
-    output_dict["axon_recall"] = loss
+    output_dict["axon_recall"] = loss.numpy()
     loss = f1_score(tensor1, tensor2)
-    output_dict["f1_score"] = loss
+    output_dict["f1_score"] = loss.numpy()
+
+    loss = edge_axon_precision(tensor1, tensor2)
+    output_dict["edge_axon_precision"] = loss.numpy()
     
+    print(output_dict)
+    for value in output_dict.values():
+        print(value)
+  
     return output_dict
 
 
@@ -229,8 +236,8 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
     draw_progress_bar(0, eta)
     # Each iteration of loop will cut a section from slices i to i + input_dim and run helper_segment_section
 
-    section_index = -dim_offset
-    while section_index <= len(file_names) - input_dim + dim_offset:
+    section_index = 0 #-dim_offset
+    while section_index <= len(file_names) - input_dim: #+ dim_offset:
 
         # Read section of folder
         section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), section_index, section_index + input_dim).astype('float32')
@@ -243,7 +250,7 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
         #section_seg = helper_segment_section(model, section_vol, gaussian_importance_map)
        # to overlap in the z direction, collect values from each section and the agg guassina map into a meta table
         orig_seg_cropped, aggregated_nb_of_predictions_cropped, aggregated_ones_cropped     = helper_segment_section(model, section_vol, gaussian_importance_map, overlap_var)
-        
+
         output_total[section_index + dim_offset: section_index  + input_dim - dim_offset, :, :] += orig_seg_cropped[dim_offset: input_dim - dim_offset, :, :]
         agg_gauss_total[section_index + dim_offset: section_index  + input_dim - dim_offset, :, :] += aggregated_nb_of_predictions_cropped[dim_offset: input_dim - dim_offset, :, :]
         ones_total[section_index + dim_offset: section_index  + input_dim - dim_offset, :, :] += aggregated_ones_cropped[dim_offset: input_dim - dim_offset, :, :]
@@ -264,7 +271,7 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
         section_index += int(output_dim/overlap_var)
 
     # Fill in slices in the end
-    end_aligned = len(file_names) - input_dim + dim_offset
+    end_aligned = len(file_names) - input_dim #+ dim_offset
 
     # Read section of folder
     section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), end_aligned, end_aligned + input_dim).astype('float32')
@@ -273,6 +280,7 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
     section_vol = section / (2 ** 16 - 1)
 
     orig_seg_cropped, aggregated_nb_of_predictions_cropped, aggregated_ones_cropped   = helper_segment_section(model, section_vol, gaussian_importance_map, overlap_var)
+
     output_total[end_aligned + dim_offset: end_aligned  + input_dim - dim_offset, :, :] += orig_seg_cropped[dim_offset: input_dim - dim_offset, :, :]
     agg_gauss_total[end_aligned + dim_offset: end_aligned  + input_dim - dim_offset, :, :] += aggregated_nb_of_predictions_cropped[dim_offset: input_dim - dim_offset, :, :] 
     ones_total[end_aligned + dim_offset: end_aligned  + input_dim - dim_offset, :, :] += aggregated_ones_cropped[dim_offset: input_dim - dim_offset, :, :]
@@ -290,6 +298,8 @@ def segment_brain_guass(input_folder, output_folder, model, overlap_var, name, t
             writer = csv.writer(csv_file)
             for key, value in output_dict.items():
                 writer.writerow([key, value])
+            for key, value in output_dict.items():
+                writer.writerow([value])
     total_time = "Total: " + str(round((time.time()/60) - start_time, 1)) + " mins"
     draw_progress_bar(1, total_time)
     print("\n")
@@ -321,10 +331,13 @@ def helper_segment_section(model, section, gaussian_importance_map, overlap_var)
     # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
     #  
     #                                (dim_offset, dim_offset)), 'constant', constant_values=(0, 0))
-    print(section.shape)
-    temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
-                                    (dim_offset, dim_offset)), 'edge')
-    print(temp_section.shape)
+    # print(section.shape)
+    # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
+    #                                 (dim_offset, dim_offset)), 'edge')
+
+    temp_section = np.pad(section, ((0, 0), (0, 0),
+                                    (0, 0)), 'edge')
+
     #keep track of sum of gaussian muliplier 
     #https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/network_architecture/neural_network.py#L363
     aggregated_nb_of_predictions = np.zeros_like(temp_section).astype('float32')
@@ -406,6 +419,6 @@ def helper_segment_section(model, section, gaussian_importance_map, overlap_var)
     cropped_seg = seg[:, dim_offset: dim_offset + section.shape[1], dim_offset: dim_offset + section.shape[2]]
     orig_seg_cropped = seg[:, dim_offset: dim_offset + section.shape[1], dim_offset: dim_offset + section.shape[2]]
     # cropped_seg /= aggregated_nb_of_predictions_cropped 
-    return orig_seg_cropped, aggregated_nb_of_predictions_cropped, aggregated_ones_cropped 
+    return seg, aggregated_nb_of_predictions, aggregated_ones
 
 

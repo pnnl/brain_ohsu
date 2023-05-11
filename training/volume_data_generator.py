@@ -68,7 +68,7 @@ class VolumeDataGenerator(Sequence):
                         do_scale=False, scale=(0.75, 1.25), border_mode_data='nearest', border_cval_data=0, order_data=3,
                       border_mode_seg='constant', border_cval_seg=0, order_seg=0,  random_crop=False, p_el_per_sample=.2,
                         p_scale_per_sample=0, p_rot_per_sample=.2, independent_scale_for_each_axis=False,
-                        p_rot_per_axis: float = .2, p_independent_scale_per_axis: int = .5):
+                        p_rot_per_axis: float = .2, p_independent_scale_per_axis: int = .2):
         dim = len(patch_size)
         
         seg_result = None
@@ -95,6 +95,8 @@ class VolumeDataGenerator(Sequence):
         if do_elastic_deform and np.random.uniform() < p_el_per_sample:
             a = np.random.uniform(alpha[0], alpha[1])
             s = np.random.uniform(sigma[0], sigma[1])
+
+
             coords = elastic_deform_coordinates(coords, a, s)
             modified_coords = True
 
@@ -219,14 +221,14 @@ class VolumeDataGenerator(Sequence):
 
     def _scale_vol(self, vol, scale):
         if scale == 1:
-            return vol
+            return  np.clip(vol, 0, 2 ** 16 - 1)
 
         return np.clip(vol * scale, 0, 2 ** 16 - 1)
 
     def _scale_constant_vol(self, vol, scale_constant):
 
         if scale_constant == 0:
-            return vol
+            return np.clip(vol, 0, 2 ** 16 - 1)
 
         mean = np.mean(vol)
         constant = scale_constant * mean
@@ -266,6 +268,7 @@ class VolumeDataGenerator(Sequence):
     def _transform_vol(self, vol):
 
         for i in range(vol.shape[0]):
+            
             trans_img = vol[i]
             trans_img = self._rotate_img(trans_img, self.rot_ang)
             trans_img = self._shift_img(trans_img, self.width_shift, self.vertical_shift)
@@ -278,7 +281,6 @@ class VolumeDataGenerator(Sequence):
             vol[i] = trans_img
 
         trans_vol = self._dflip_vol(vol, self.dflip)
-
         return trans_vol
 
     def flow(self, x, y, batch_size):
@@ -301,13 +303,20 @@ class VolumeDataGenerator(Sequence):
                 x_copy = np.copy(x[ind])
                 y_copy = np.copy(y[ind])
                 if self.normal == True:
-
+                    # scale
                     preprocess_vol = self._preprocess_vol(x_copy)
+                    # flip
                     x_gen[counter] = self._transform_vol(preprocess_vol)
                     y_gen[counter] = self._transform_vol(y_copy)
                 else:
+                    # augment
                     x2, y2 = self.augment_spatial(data= x_copy, seg = y_copy, patch_size = x_copy.squeeze().shape)
+                    # scale after augmenting
                     x2 = self._preprocess_vol(x2)
+                    # # flip
+                    # x2 = self._transform_vol(x2)
+                    # y2 = self._transform_vol(y2)
+
                     y2 = np.copy(crop_numpy(offset, offset, offset, y2))
                     x_gen[counter] = x2
                     y_gen[counter] = y2

@@ -9,6 +9,7 @@ oversample_foreground_percent = .9
 def get_do_oversample(i, nb_examples):
         return not i < round(nb_examples * (1 - oversample_foreground_percent))
 
+
 def get_random_training(volume, label, i, nb_examples, normal):
     # Get a random corner to cut out a chunk for the training-set
 
@@ -44,6 +45,8 @@ def get_random_training(volume, label, i, nb_examples, normal):
 
 
 
+
+
 def generate_data_set(data_original_path, data_set_path, normal = True, nb_examples=None):
     # Get the directory for volumes and labels sorted
     volumes_path = sorted(get_dir(data_original_path + "/volumes"))
@@ -74,7 +77,8 @@ def generate_data_set(data_original_path, data_set_path, normal = True, nb_examp
 
 
     if nb_examples is None:
-        nb_examples = 100 * len(volumes_path)
+        # change to 100 if not double
+        nb_examples = 200 * len(volumes_path)
 
     draw_progress_bar(0)
     for i in range(nb_examples):
