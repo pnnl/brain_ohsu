@@ -45,12 +45,24 @@ def crop_numpy(dim1, dim2, dim3, vol):
 
 
 def write_tiff_stack(vol, fname):
+    # convert to number rather than decimal and to 8 so can adjust
     im = Image.fromarray(vol[0])
     ims = []
 
     for i in range(1, vol.shape[0]):
         
         ims.append(Image.fromarray(vol[i]))
+
+    im.save(fname, save_all=True, append_images=ims)
+
+def write_tiff_stack_paper(vol, fname):
+    # convert to number rather than decimal and to 8 so can adjust
+    im = Image.fromarray((vol[0] * 255).astype(np.uint8))
+    ims = []
+
+    for i in range(1, vol.shape[0]):
+        
+        ims.append(Image.fromarray((vol[i] * 255).astype(np.uint8)))
 
     im.save(fname, save_all=True, append_images=ims)
 
@@ -120,7 +132,6 @@ def write_folder_stack(vol, path):
     makedirs(path)
 
     for i in range(vol.shape[0]):
-
         fname = os.path.join(path, "slice" + str(i).zfill(5) + ".tiff")
         cv2.imwrite(fname, vol[i])
 
@@ -135,6 +146,8 @@ def read_tiff_stack(path):
 #         plt.imshow(slice)
 #         plt.show()
         images.append(slice)
+        #'I;16B' # uint16
+        #uint8 mode=L 
 
     return np.array(images)
 
@@ -240,7 +253,7 @@ def generate_data_set(data_original_path, data_set_path, nb_examples=10):
         # adding in to test
         # removing everything with  makes the scaling spread out into negatives
         # volume_chunk[:, :, :] = 0.0
-        volume_chunk[:, 50:52, 50:52] = 10000.0
+        volume_chunk[:, 50:52, 50:52] = 500
         # label_chunk[:, :, :] = 0
         label_chunk[:, 50:52, 50:52] =2
         write_tiff_stack(volume_chunk, data_set_path + "/volumes/volume-" + str(i) + ".tiff")
@@ -364,16 +377,16 @@ def augment_spatial(data, seg, patch_size, patch_center_dist_from_border=30,
     seg_result = None
     if seg is not None:
         if dim == 2:
-            seg_result = np.zeros((patch_size[0], patch_size[1], seg.shape[3]), dtype=np.float32)
+            seg_result = np.zeros((patch_size[0], patch_size[1], seg.shape[3]), dtype=np.float16)
         else:
             seg_result = np.zeros((patch_size[0], patch_size[1], patch_size[2], seg.shape[3]),
-                                  dtype=np.float32)
+                                  dtype=np.float16)
 
     if dim == 2:
-        data_result = np.zeros(( patch_size[0], patch_size[1], data.shape[3]), dtype=np.float32)
+        data_result = np.zeros(( patch_size[0], patch_size[1], data.shape[3]), dtype=np.float16)
     else:
         data_result = np.zeros((  patch_size[0], patch_size[1], patch_size[2], data.shape[3]) ,
-                               dtype=np.float32)
+                               dtype=np.float16)
 
     if not isinstance(patch_center_dist_from_border, (list, tuple, np.ndarray)):
         patch_center_dist_from_border = dim * [patch_center_dist_from_border]
@@ -504,7 +517,7 @@ class VolumeDataGenerator(Sequence):
         dx = cols * dx
         dy = rows * dy
 
-        M = np.float32([[1, 0, dx], [0, 1, dy]])
+        M = np.float16([[1, 0, dx], [0, 1, dy]])
         result = cv2.warpAffine(image, M, (cols, rows))
         return result
 
@@ -567,14 +580,14 @@ class VolumeDataGenerator(Sequence):
 
     def _scale_vol(self, vol, scale):
         if scale == 1:
-            return vol
+            return np.clip(vol, 0, 2 ** 16 - 1)
 
         return np.clip(vol * scale, 0, 2 ** 16 - 1)
 
     def _scale_constant_vol(self, vol, scale_constant):
 
         if scale_constant == 0:
-            return vol
+            return np.clip(vol, 0, 2 ** 16 - 1)
 
         mean = np.mean(vol)
         constant = scale_constant * mean
@@ -685,9 +698,9 @@ class VolumeDataGenerator(Sequence):
                 
                 preprocess_vol = self._preprocess_vol(x_copy)
                 #preprocess_vol = self.augment_gaussian_blur(preprocess_vol)
-                write_tiff_stack(preprocess_vol[:,:,:, 0].astype(float), data_set_path + "/look/processed-input" + str(i) + ".tiff")
-                write_tiff_stack(y_copy[:,:,:, 0].astype(float), data_set_path + "/look/orig-label" + str(i) + ".tiff")
-                write_tiff_stack(np.sum(y_copy[:,:,:, :].astype(float), -1), data_set_path + "/look/orig-label-all-info" + str(i) + ".tiff")
+                write_tiff_stack_paper(preprocess_vol[:,:,:, 0].astype(float), data_set_path + "/look/processed-input" + str(i) + ".tiff")
+                write_tiff_stack_paper(y_copy[:,:,:, 0].astype(float), data_set_path + "/look/orig-label" + str(i) + ".tiff")
+                write_tiff_stack_paper(np.sum(y_copy[:,:,:, :].astype(float), -1), data_set_path + "/look/orig-label-all-info" + str(i) + ".tiff")
                 print("min x")
                 print(x_copy.min())
                 print(x_copy.max())
@@ -702,9 +715,9 @@ class VolumeDataGenerator(Sequence):
                 print("preprcoess")
                 print(preprocess_vol.min())
                 print(preprocess_vol.max())
-                write_tiff_stack(x2[:,:,:, 0], data_set_path + "/look/augment_spatial-input-" + str(i) + ".tiff")
-                write_tiff_stack(y2[:,:,:, 0].astype(float), data_set_path + "/look/augment_spatial-label" + str(i) + ".tiff")
-                write_tiff_stack(np.sum(y2[:,:,:, :].astype(float), -1), data_set_path + "/look/augment_spatial-label-all-info" + str(i) + ".tiff")
+                write_tiff_stack_paper(x2[:,:,:, 0], data_set_path + "/look/augment_spatial-input-" + str(i) + ".tiff")
+                write_tiff_stack_paper(y2[:,:,:, 0].astype(float), data_set_path + "/look/augment_spatial-label" + str(i) + ".tiff")
+                write_tiff_stack_paper(np.sum(y2[:,:,:, :].astype(float), -1), data_set_path + "/look/augment_spatial-label-all-info" + str(i) + ".tiff")
                 # keep offset zero until after spatial transformation
                 
                 y2 = np.copy(crop_numpy(offset, offset, offset, y2))
@@ -720,12 +733,12 @@ x_validation, y_validation = load_data(validation_path)
 print("Loaded Data")
 
 datagen = VolumeDataGenerator(
-    horizontal_flip=True,
-    vertical_flip=True,
-    depth_flip=True,
+    horizontal_flip=False,
+    vertical_flip=False,
+    depth_flip=False,
     min_max_normalization=True,
-    scale_range=0.1,
-    scale_constant_range=0.2
+    scale_range=0,
+    scale_constant_range=0
 )
 
 #train_generator = datagen.flow(x_train, y_train, batch_size)
@@ -733,5 +746,6 @@ validation_generator = datagen.flow(x_validation, y_validation, batch_size)
 
 for i in range(1):
     x3, y3 =  next(validation_generator)
+    print(np.unique(x3))
     print(np.unique(y3))
   
