@@ -1,8 +1,8 @@
 import numpy as np
 
+
 # 1 should be axons and 2 should be artifacts
 def process_labels(vol):
-
     for i in range(vol.shape[0]):
         slice = vol[i]
 
@@ -19,5 +19,13 @@ def process_labels(vol):
 
 
 def is_axon_close(slice, x, y):
-    return slice[x][y+1] == 2 or slice[x+1][y+1] == 2 or slice[x+1][y] == 2 or slice[x+1][y-1] == 2 or slice[x][y-1] == 2 or \
-           slice[x-1][y-1] == 2 or slice[x-1][y] == 2 or slice[x-1][y+1] == 2
+    return (
+        slice[x][y + 1] == 2
+        or slice[x + 1][y + 1] == 2
+        or slice[x + 1][y] == 2
+        or slice[x + 1][y - 1] == 2
+        or slice[x][y - 1] == 2
+        or slice[x - 1][y - 1] == 2
+        or slice[x - 1][y] == 2
+        or slice[x - 1][y + 1] == 2
+    )

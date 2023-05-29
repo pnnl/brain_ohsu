@@ -8,10 +8,23 @@ import shutil
 import sys
 import logging
 
+
 def crop_numpy(dim1, dim2, dim3, vol):
-    return vol[dim1:vol.shape[0] - dim1, dim2:vol.shape[1] - dim2, dim3:vol.shape[2] - dim3]
+    return vol[
+        dim1 : vol.shape[0] - dim1,
+        dim2 : vol.shape[1] - dim2,
+        dim3 : vol.shape[2] - dim3,
+    ]
+
+
 def crop_numpy_batch(dim1, dim2, dim3, vol):
-    return vol[:, dim1:vol.shape[1] - dim1, dim2:vol.shape[2] - dim2, dim3:vol.shape[3] - dim3, :]
+    return vol[
+        :,
+        dim1 : vol.shape[1] - dim1,
+        dim2 : vol.shape[2] - dim2,
+        dim3 : vol.shape[3] - dim3,
+        :,
+    ]
 
 
 def write_tiff_stack(vol, fname):
@@ -25,7 +38,7 @@ def write_tiff_stack(vol, fname):
 
 
 def get_dir(path):
-    tiffs = [join(path, f) for f in listdir(path) if f[0] != '.']
+    tiffs = [join(path, f) for f in listdir(path) if f[0] != "."]
     return sorted(tiffs)
 
 
@@ -35,7 +48,7 @@ def crop_cube(x, y, z, vol, cube_length=64):
 
 
 def crop_box(x, y, z, vol, shape):
-    return vol[z:z + shape[2], x:x + shape[0], y:y + shape[1]]
+    return vol[z : z + shape[2], x : x + shape[0], y : y + shape[1]]
 
 
 """
@@ -47,11 +60,13 @@ Read images from start_index to end_index from a folder
 
 @raise FileNotFoundError: If the path to the folder cannot be found 
 """
+
+
 def read_folder_section(path, start_index, end_index):
     fnames = get_dir(path)
     vol = []
 
-    for f in fnames[start_index: end_index]:
+    for f in fnames[start_index:end_index]:
         img = cv2.imread(f, cv2.COLOR_BGR2GRAY)
         vol.append(img)
 
@@ -79,8 +94,8 @@ def read_folder_stack(path):
 
     return vol
 
-def write_folder_stack(vol, path):
 
+def write_folder_stack(vol, path):
     if os.path.exists(path):
         print("Overwriting " + path)
         shutil.rmtree(path)
@@ -88,7 +103,6 @@ def write_folder_stack(vol, path):
     makedirs(path)
 
     for i in range(vol.shape[0]):
-
         fname = os.path.join(path, "slice" + str(i).zfill(5) + ".tiff")
         cv2.imwrite(fname, vol[i])
 
@@ -103,11 +117,12 @@ def read_tiff_stack(path):
 
     return np.array(images)
 
+
 # get half of tif for train and test for now
 def read_tiff_stack_train(path):
     img = Image.open(path)
     images = []
-    train_num = int(img.n_frames*.5)
+    train_num = int(img.n_frames * 0.5)
     for i in range(train_num):
         img.seek(i)
         slice = np.array(img)
@@ -115,13 +130,13 @@ def read_tiff_stack_train(path):
 
     return np.array(images)
 
+
 # get half of tif for train and test for now
 def read_tiff_stack_val(path):
     img = Image.open(path)
     images = []
-    val_num = int(img.n_frames*.5)
+    val_num = int(img.n_frames * 0.5)
     for i in range(val_num, img.n_frames):
-
         img.seek(i)
         slice = np.array(img)
         images.append(slice)
@@ -129,13 +144,13 @@ def read_tiff_stack_val(path):
     logging.info(np.array(images).shape)
     return np.array(images)
 
+
 def read_tiff_stack_inference(path):
     img = Image.open(path)
     images = []
 
-    val_num = int(img.n_frames*.5)
+    val_num = int(img.n_frames * 0.5)
     for i in range(val_num, img.n_frames):
-
         img.seek(i)
         slice = np.array(img)
         images.append(slice)
@@ -167,16 +182,20 @@ def preprocess_batch(batch):
 
 def dist(p1, p2):
     sqr = (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2 + (p1[2] - p2[2]) ** 2
-    return sqr ** .5
-
+    return sqr**0.5
 
 
 """
 Progress bar to indicate status of the segment_brain function
 """
 
-def draw_progress_bar(percent, eta="", bar_len = 40):
+
+def draw_progress_bar(percent, eta="", bar_len=40):
     # percent float from 0 to 1.
     sys.stdout.write("\r")
-    sys.stdout.write("[{:<{}}] {:>3.0f}%       {:20}".format("=" * int(bar_len * percent), bar_len, percent * 100, eta))
+    sys.stdout.write(
+        "[{:<{}}] {:>3.0f}%       {:20}".format(
+            "=" * int(bar_len * percent), bar_len, percent * 100, eta
+        )
+    )
     sys.stdout.flush()

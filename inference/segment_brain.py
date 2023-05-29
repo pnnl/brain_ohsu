@@ -20,22 +20,27 @@ threshold = 0.01
 dim_offset = (input_dim - output_dim) // 2
 
 
-
 """
 Progress bar to indicate status of the segment_brain function
 """
 
-def draw_progress_bar(percent, eta, bar_len = 40):
+
+def draw_progress_bar(percent, eta, bar_len=40):
     # percent float from 0 to 1.
     sys.stdout.write("\r")
-    sys.stdout.write("[{:<{}}] {:>3.0f}%       {:20}".format("=" * int(bar_len * percent), bar_len, percent * 100, eta))
+    sys.stdout.write(
+        "[{:<{}}] {:>3.0f}%       {:20}".format(
+            "=" * int(bar_len * percent), bar_len, percent * 100, eta
+        )
+    )
     sys.stdout.flush()
 
 
 def get_dir(path):
-    tiffs = [os.path.join(path, f) for f in os.listdir(path) if f[0] != '.']
+    tiffs = [os.path.join(path, f) for f in os.listdir(path) if f[0] != "."]
 
     return sorted(tiffs)
+
 
 """
 Read images from start_index to end_index from a folder
@@ -46,11 +51,12 @@ Read images from start_index to end_index from a folder
 
 @raise FileNotFoundError: If the path to the folder cannot be found 
 """
+
+
 def read_folder_section(path, start_index, end_index):
     fnames = get_dir(path)
     vol = []
     for i in range(start_index, end_index):
-
         if i < 0:
             first_img = cv2.imread(fnames[0], cv2.COLOR_BGR2GRAY)
             vol.append(first_img)
@@ -68,8 +74,8 @@ def read_folder_section(path, start_index, end_index):
 
 def write_folder_section(output_folder, file_names, section_index, section_seg):
     # Write the segmentation into the output_folder
-    # since not add dim_off to the filesname at both beginning and end, don't need to subtract here either
-    for slice_index in range(0, input_dim): #range(dim_offset, input_dim - dim_offset):
+    # helper function returns
+    for slice_index in range(dim_offset, input_dim - dim_offset):
         input_file_name = file_names[section_index + slice_index]
 
         output_file_name = "seg-" + os.path.basename(input_file_name)
@@ -78,6 +84,8 @@ def write_folder_section(output_folder, file_names, section_index, section_seg):
         # If write fails print problem
         pil_image = Image.fromarray(section_seg[slice_index])
         pil_image.save(output_full_path)
+
+
 """
 Segment a brain by first cropping a list of chunks from the brain of the models's input size and executing the models on 
 a batch of chunks. To conserve memory, the function will load sections of the brain at once.   
@@ -90,11 +98,13 @@ a batch of chunks. To conserve memory, the function will load sections of the br
 """
 
 
-def segment_brain_normal(input_folder, output_folder, model, name, tif_input = True):
+def segment_brain_normal(input_folder, output_folder, model, name, tif_input=True):
     if tif_input == True:
         file_names = get_dir(os.path.join(input_folder, "volumes"))
+        print("file names input volumes")
+        print(file_names)
         for i in range(len(file_names)):
-            vol= read_tiff_stack(file_names[i])
+            vol = read_tiff_stack(file_names[i])
             write_folder_stack(vol, os.path.join(input_folder, f"slices_{name}"))
 
     # Name of folder
@@ -112,10 +122,9 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input = T
         print("The X and Y direction must contain a minimum of 36 pixels")
         return
 
-
     eta = "ETA: Pending"
     # Get start time in minutes. Needed to calculate ETA
-    start_time = time.time()/60
+    start_time = time.time() / 60
 
     total_sections = (len(file_names) // output_dim) * output_dim
     print("Name: " + folder_name)
@@ -123,15 +132,18 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input = T
     draw_progress_bar(0, eta)
     # Each iteration of loop will cut a section from slices i to i + input_dim and run helper_segment_section
 
-    # not adding a  dim_off set number of slices to the beginning and end 
-    section_index = 0 #-dim_offset
-    while section_index <= len(file_names) - input_dim:  #+ dim_offset:
-
+    # not adding a  dim_off set number of slices to the beginning and end
+    section_index = 0  # -dim_offset
+    while section_index <= len(file_names) - input_dim:  # + dim_offset:
         # Read section of folder
-        section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), section_index, section_index + input_dim).astype('float32')
+        section = read_folder_section(
+            os.path.join(input_folder, f"slices_{name}"),
+            section_index,
+            section_index + input_dim,
+        ).astype("float32")
 
         # Make the volume pixel intensity between 0 and 1
-        section_vol = section / (2 ** 16 - 1)
+        section_vol = section / (2**16 - 1)
 
         # Get the segmentation of this chunk
         section_seg = helper_segment_section(model, section_vol)
@@ -140,9 +152,9 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input = T
         write_folder_section(output_folder, file_names, section_index, section_seg)
 
         # Calculate ETA
-        now_time = time.time()/60
-        sections_left = ((total_sections - section_index)/output_dim) - 1
-        time_per_section = (now_time - start_time)/(1 + section_index/output_dim)
+        now_time = time.time() / 60
+        sections_left = ((total_sections - section_index) / output_dim) - 1
+        time_per_section = (now_time - start_time) / (1 + section_index / output_dim)
 
         eta = "ETA: " + str(round(sections_left * time_per_section, 1)) + " mins"
         draw_progress_bar((section_index + dim_offset) / total_sections, eta)
@@ -151,31 +163,36 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input = T
 
     # Fill in slices in the end
     # since not adding dim_off padding, don't need to add here either
-    end_aligned = len(file_names) - input_dim  #+ dim_offset
+    end_aligned = len(file_names) - input_dim  # + dim_offset
 
     # Read section of folder
-    section = read_folder_section(os.path.join(input_folder, f"slices_{name}"), end_aligned, end_aligned + input_dim).astype('float32')
+    section = read_folder_section(
+        os.path.join(input_folder, f"slices_{name}"),
+        end_aligned,
+        end_aligned + input_dim,
+    ).astype("float32")
 
     # Make the volume pixel intensity between 0 and 1
-    section_vol = section / (2 ** 16 - 1)
+    section_vol = section / (2**16 - 1)
 
     section_seg = helper_segment_section(model, section_vol)
 
     write_folder_section(output_folder, file_names, end_aligned, section_seg)
 
-    total_time = "Total: " + str(round((time.time()/60) - start_time, 1)) + " mins"
+    total_time = "Total: " + str(round((time.time() / 60) - start_time, 1)) + " mins"
     if tif_input == True:
-        output_dict =loss_inference(input_folder, output_folder)
+        output_dict = loss_inference(input_folder, output_folder)
 
-        with open(output_folder + "/" + f"dict{name}.csv", 'w') as csv_file:  
+        with open(output_folder + "/" + f"dict{name}.csv", "w") as csv_file:
             writer = csv.writer(csv_file)
             for key, value in output_dict.items():
                 writer.writerow([key, value])
-            
+
             for key, value in output_dict.items():
                 writer.writerow([value])
     draw_progress_bar(1, total_time)
     print("\n")
+
 
 def write_tiff_stack(vol, fname):
     im = Image.fromarray(vol[0])
@@ -185,6 +202,7 @@ def write_tiff_stack(vol, fname):
         ims.append(Image.fromarray(vol[i]))
 
     im.save(fname, save_all=True, append_images=ims)
+
 
 """
 Helper function for segment_brain. Takes in a section of the brain 
@@ -199,14 +217,13 @@ Helper function for segment_brain. Takes in a section of the brain
 def helper_segment_section(model, section):
     # List of bottom left corner coordinate of all input chunks in the section
     coords = []
-    # remove the dim_offset padding normally used to predict the full image with padding of 0 
+    # remove the dim_offset padding normally used to predict the full image with padding of 0
     # Pad the section to account for the output dimension being smaller the input dimension
     # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
     #                                 (dim_offset, dim_offset)), 'constant', constant_values=(0, 0))
     # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
     #                                 (dim_offset, dim_offset)), 'edge')
-    temp_section = np.pad(section, ((0, 0), (0, 0),
-                                    (0, 0)), 'edge')
+    temp_section = np.pad(section, ((0, 0), (0, 0), (0, 0)), "edge")
 
     # Add most chunks aligned with top left corner
     for x in range(0, temp_section.shape[1] - input_dim, output_dim):
@@ -215,14 +232,16 @@ def helper_segment_section(model, section):
 
     # Add bottom side aligned with bottom side
     for x in range(0, temp_section.shape[1] - input_dim, output_dim):
-        coords.append((0, x, temp_section.shape[2]-input_dim))
+        coords.append((0, x, temp_section.shape[2] - input_dim))
 
     # Add right side aligned with right side
     for y in range(0, temp_section.shape[2] - input_dim, output_dim):
-        coords.append((0, temp_section.shape[1]-input_dim, y))
+        coords.append((0, temp_section.shape[1] - input_dim, y))
 
     # Add bottom right corner
-    coords.append((0, temp_section.shape[1]-input_dim, temp_section.shape[2]-input_dim))
+    coords.append(
+        (0, temp_section.shape[1] - input_dim, temp_section.shape[2] - input_dim)
+    )
 
     coords = np.array(coords)
     # List of cropped volumes that the network will process
@@ -234,18 +253,19 @@ def helper_segment_section(model, section):
     i = 0
 
     # Generate dummy segmentation
-    seg = np.zeros(temp_section.shape).astype('float32')
+    seg = np.zeros(temp_section.shape).astype("float32")
 
     # Loop through each possible coordinate
     while i < len(coords):
-
         # Fill up the batch by skipping chunks below the threshold
         batch_count = 0
         while i < len(coords) and batch_count < batch_size:
             (z, x, y) = coords[i]
 
             # Get the chunk associated with the coordinate
-            test_crop = temp_section[z:z + input_dim, x:x + input_dim, y:y + input_dim]
+            test_crop = temp_section[
+                z : z + input_dim, x : x + input_dim, y : y + input_dim
+            ]
 
             # Only add chunk to batch if its max value is above threshold
             # (Avoid wasting time processing background chunks)
@@ -262,7 +282,11 @@ def helper_segment_section(model, section):
         # Place the predictions in the segmentation
         for j in range(len(batch_coords)):
             (z, x, y) = batch_coords[j] + dim_offset
-            seg[z:z + output_dim, x:x + output_dim, y:y + output_dim] = output[j]
+            seg[z : z + output_dim, x : x + output_dim, y : y + output_dim] = output[j]
 
-    cropped_seg = seg[:, dim_offset: dim_offset + section.shape[1], dim_offset: dim_offset + section.shape[2]]
-    return seg #cropped_seg
+    cropped_seg = seg[
+        :,
+        dim_offset : dim_offset + section.shape[1],
+        dim_offset : dim_offset + section.shape[2],
+    ]
+    return seg  # cropped_seg

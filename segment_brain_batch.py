@@ -6,16 +6,20 @@ import shutil
 import itertools
 
 if __name__ == "__main__":
+
+
+    base_path = os.path.abspath(__file__ + "/..")
         # Load the network
     model_weight_list = [
-
+    
+  
     #all changes variations, .5 background, 200 images per tif for all , nearest means using nearest for interpolation instead of 0 for labels
     '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_flip_normal_False.hdf5',
     '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_flip_rot_normal_False.hdf5',
     '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_nearest_normal_False.hdf5',
     '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_normal_False.hdf5',
     '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_rot_nearest_normal_False.hdf5',
-    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_rot_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_rot_normal_False.hdf5', # best model 20 rot, no flip constant
 
     '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_flip_normal_False.hdf5', 
     '/data/model-weights/best_weights_checkpoint_all_changes_2X_50_aug_flip_rot_normal_False.hdf5',
@@ -31,8 +35,9 @@ if __name__ == "__main__":
     '/data/model-weights/best_weights_checkpoint_orig_model_flip_1X_aug_200_only_normal_False.hdf5', # includes rot, 200 images, not actually flipping, 30
     '/data/model-weights/best_weights_checkpoint_aug_50_only_normal_False.hdf5', # includes rot
     '/data/model-weights/best_weights_checkpoint_aug_20_only_normal_False.hdf5', # includes rot
-    '/data/model-weights/best_weights_checkpoint_orig_model_flip_1X_lr_reduce_only_normal_False.hdf5', #not actually flipping,
-    '/data/model-weights/best_weights_checkpoint_orig_model_flip_1X_foreground_only_normal_False.hdf5',#not actually flipping,
+    '/data/model-weights/best_weights_checkpoint_lr_reduce_200_no_flip_normal_False.hdf5',
+    '/data/model-weights/best_weights_checkpoint_oversample_200_no_flip_normal_False.hdf5',
+      
 
     #best trailmap adjustments
 
@@ -48,7 +53,7 @@ if __name__ == "__main__":
 
     ]
 
-    image_path  =  [  '/qfs/projects/brain_ohsu/TRAIL_MAP/data/validation/validation-original',  '/qfs/projects/brain_ohsu/TRAIL_MAP/data/test/test-original']
+    image_path  =  [base_path + f"/data/validation/validation-original",  base_path + f"/data/test/test-original"]
     combos = list(itertools.product(image_path, model_weight_list))
 
     input_batch, model_weight   = combos[int(sys.argv[-1])]

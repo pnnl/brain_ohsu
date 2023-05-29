@@ -130,9 +130,9 @@ def edge_axon_precision(y_true, y_pred):
 
     mask = tf.equal(weights, 1)
 
-    mask_true = tf.boolean_mask(y_true[:, :, :, :, 0], mask)
-    mask_pred = tf.boolean_mask(y_pred[:, :, :, :, 0], mask)
-    mask_edge_true = tf.boolean_mask(y_true[:, :, :, :, 3], mask)
+    mask_true = tf.cast(tf.boolean_mask(y_true[:, :, :, :, 0], mask), tf.float32)
+    mask_pred = tf.cast(tf.boolean_mask(y_pred[:, :, :, :, 0], mask), tf.float32)
+    mask_edge_true = tf.cast(tf.boolean_mask(y_true[:, :, :, :, 3], mask), tf.float32)
 
     true_positives = K.sum(K.round(K.clip(mask_true * mask_pred, 0, 1)))
     predicted_positives = K.sum(K.round(K.clip(mask_pred, 0, 1)))
