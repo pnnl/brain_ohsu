@@ -13,7 +13,11 @@ pip install batchgenerators==0.25
 
 ## Inference
 
-Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. Add model weights to segment_brain_batch.py at the model_weight_list variable and data with label and volume folder for the image_path variable. This script will use labels to calculate performance metrics for inference. Use the combination number of the desired model_weight and data combination as an argument for segment_brain_batch.py. If you wish to use guassian inference, set the variable guass to True under segment_brain.py. 
+Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. 
+* Add model weights path to segment_brain_batch.py at the model_weight_list variable.
+* Add the path to the data (with label and volume folders) for the image_path variable. This script will use labels to calculate performance metrics for inference.
+* Use the combination number of the desired model_weight and data combination as an argument for segment_brain_batch.py.
+* If you wish to use guassian inference, set the variable guass to True under segment_brain.py. 
 
 ```
 python3 segment_brain_batch.py {combination_number}
@@ -22,14 +26,21 @@ python3 segment_brain_batch.py {combination_number}
 
 ## Training
 
-Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. When preparing the data for training, the location of the  data is set directly with the prepare_data.py file at data_original_path and data_set_path for each of the functions. The data_set_path should match the name provided as the training data under train.py. The number of examples should be set directly within prepare_data with the nb_examples variable. The boolean argument indicates if the training should use normal setting or the settings adopted from nnU-net. 
+Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. 
+* When preparing the data for training, the location of the  data is set directly with the prepare_data.py file at data_original_path and data_set_path for each of the functions.
+* The data_set_path should match the name provided as the training data under train.py at line 21 and 22.
+* The number of examples should be set directly within prepare_data with the nb_examples variable.
+* The boolean argument indicates if the training should use normal setting or the settings adopted from nnU-net. 
 
 ```
 python3 prepare_data.py "generate_training_set" True
 python3 prepare_data.py "generate_validation_set" True
 ```
 
-For training, the first argument is a boolean to indicate if the training should use normal setting or the settings adopted from nnU-net. The second argument indicates the name of the model. The location of the training data is set directly with the train.py file at line 21 and 22. 
+For training:
+* The first argument is a boolean to indicate if the training should use normal setting or the settings adopted from nnU-net.
+* The second argument indicates the name of the model. T
+* The location of the training data is set directly with the train.py file at line 21 and 22. 
 
 ```
 python3 train.py False "name_of_model"
