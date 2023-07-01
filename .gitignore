@@ -3,3 +3,4 @@
 *.jpg
 data/validation/validation-set/volumes/*
 data*
+*.sbatch
