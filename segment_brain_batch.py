@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     ]
 
-    image_path  =  [base_path + f"/data/validation/validation-original",  base_path + f"/data/test/test-original"]
+    image_path  =  [base_path + f"/data/validation/validation-original",  base_path + f"/data/testing/testing-original"]
     combos = list(itertools.product(image_path, model_weight_list))
 
     input_batch, model_weight   = combos[int(sys.argv[-1])]
