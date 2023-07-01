@@ -2,5 +2,10 @@
 *.png
 *.jpg
 data/validation/validation-set/volumes/*
+data/validation/validation-set/labels/*
+data/training/training-set/volumes/*
+data/training/training-set/labels/*
+data/testing/test-set/labels/*
+data/testing/test-set/volumes/*
 data*
 *.sbatch
