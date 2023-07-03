@@ -49,7 +49,13 @@ python3 train.py False "name_of_model"
 
 ## Authors
 
-Marjolein Oostrom
+Marjolein Oostrom 1, Michael A. Muniak 2, Rogene Eichler West 1, Sarah Akers 1, Paritosh Pande 3, Moses Obiri 1, Wei Wang 4, Kasey Bowyer 4, Zhuhao Wu 4, Lisa Bramer 3, Tianyi Mao 2*, Bobbie Jo Webb-Robertson 3*
+
+1. AI & Data Analytics Division, Pacific Northwest National Laboratory, Richland, WA 99352
+2. Vollum Institute, Oregon Health & Science University, Portland, OR 97239
+3. Biological Sciences Division, Pacific Northwest National Laboratory, Richland, WA 99352
+4. Appel Alzheimer's Disease Research Institute, Feil Family Brain and Mind Research Institute, Weill Cornell Medicine, New York, NY 10021
+
 
 The work is adapted from code created by: 
 * **Albert Pun**
@@ -81,6 +87,9 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## Acknowledgments
+
+ MO, RMEW, SA, MO, LB, BJWR were supported by the Laboratory Directed Research and Development at Pacific Northwest National Laboratory (PNNL), a Department of Energy facility operated by Battelle under contract DE-AC05-76RLO01830. WW, KB, and ZW were supported in part by a NIH/BRAIN Initiative Grant RF1MH128969. This research is affiliated with the Pacific northwest bioMedical Innovation Co-laboratory (PMedIC) collaboration between OHSU and PNNL.
+
 The work is adapted from work sponsored by: 
 * Research sponsored by Liqun Luo's Lab
 
