@@ -48,7 +48,7 @@ def create_weighted_binary_crossentropy(axon_weight, background_weight, artifact
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
-    loss = create_weighted_binary_crossentropy(1.5, 0.2, 0.8, 0.5)(y_true, y_pred)
+    loss = create_weighted_binary_crossentropy(1.5, 0.2, 0.8, 0.05)(y_true, y_pred)
     return loss
 
 
@@ -99,6 +99,7 @@ def axon_recall(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(mask_true * mask_pred, 0, 1)))
     actual_positives = K.sum(K.round(K.clip(mask_true, 0, 1)))
 
+
     recall = true_positives / (actual_positives + K.epsilon())
 
     return recall
@@ -125,6 +126,7 @@ def f1_score(y_true, y_pred):
 
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
+
 def edge_axon_precision(y_true, y_pred):
     weights = tf.reduce_sum(y_true, axis=-1)
 
@@ -142,6 +144,13 @@ def edge_axon_precision(y_true, y_pred):
     precision = true_positives / (predicted_positives + K.epsilon() - edge_count)
 
     return precision
+
+def edge_f1_score(y_true, y_pred):
+
+    precision = edge_axon_precision(y_true, y_pred)
+    recall = axon_recall(y_true, y_pred)
+
+    return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 
 def get_net():

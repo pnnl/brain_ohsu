@@ -13,15 +13,16 @@ if __name__ == "__main__":
     normal = sys.argv[1]
     name_model = sys.argv[2]
     batch_size = 6
-    epochs = 150
+    epochs = 50
     print(name_model)
     print(normal)
 
     # change 200 to 100 if not doing double
-    training_path = base_path + f"/data/training/training-set_normal_{normal}_200"
-    validation_path = base_path + f"/data/validation/validation-set_normal_{normal}_200"
+    training_path = base_path + f"/data/training/training-set_normal_{normal}_100"
+    validation_path = base_path + f"/data/validation/validation-set_normal_True_100"
 
-    x_train, y_train = load_data(training_path, normal =normal)
+    # load data needs to correspond to volumne generator
+    x_train, y_train = load_data(training_path, normal = normal)
     x_validation, y_validation = load_data(validation_path, normal = True)
 
 
@@ -63,21 +64,21 @@ if __name__ == "__main__":
     
 
     weights_path = base_path + "/data/model-weights/trailmap_model.hdf5"
+    print(weights_path)
 
     model = get_net()
     # This will do transfer learning and start the model off with our current best model.
     # Remove the model.load_weight line below if you want to train from scratch
     model.load_weights(weights_path)
     if normal== False:
-        lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
-                                patience=20)
+        lr_scheduler = ReduceLROnPlateau()
         # use more steps in the epochs
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
         model.fit_generator(train_generator,
-                            steps_per_epoch=800//6,
+                            steps_per_epoch=400//batch_size,
                             epochs=epochs,
                             validation_data=validation_generator,
-                            validation_steps=200//6,
+                            validation_steps=100//batch_size,
                             use_multiprocessing=False,
                             workers=1,
                             callbacks=[lr_scheduler, tboard, period_checkpoint, best_weight_checkpoint],
@@ -87,10 +88,10 @@ if __name__ == "__main__":
 
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
         model.fit_generator(train_generator,
-                            steps_per_epoch=800//6,
+                            steps_per_epoch=400//batch_size,
                             epochs=epochs,
                             validation_data=validation_generator,
-                            validation_steps=200//6,
+                            validation_steps=100//batch_size,
                             use_multiprocessing=False,
                             workers=1,
                             callbacks=[tboard, period_checkpoint, best_weight_checkpoint],

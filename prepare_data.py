@@ -18,7 +18,7 @@ if __name__ == "__main__":
         # Validation directories
         data_original_path = base_path + f"/data/validation/validation-original"
         # change path here to 100 if not double
-        data_set_path = base_path + f"/data/validation/validation-set_normal_{normal}_200"
+        data_set_path = base_path + f"/data/validation/validation-set_normal_{normal}_100"
 
         # Default value is None
         nb_examples = None
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         # Training directories
         data_original_path = base_path + "/data/training/training-original"
          # change path here to 100 if not double
-        data_set_path = base_path + f"/data/training/training-set_normal_{normal}_200"
+        data_set_path = base_path + f"/data/training/training-set_normal_{normal}_100"
 
         # Default value is None
         nb_examples = None

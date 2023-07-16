@@ -4,19 +4,19 @@ from utilities.utilities import *
 import os
 import shutil
 
-oversample_foreground_percent = 0.9
+oversample_foreground_percent = 0.2
 
 
 # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L204
-def get_do_oversample(i, nb_examples):
-    return not i < round(nb_examples * (1 - oversample_foreground_percent))
+def do_not_do_oversample():
+    return np.random.uniform() > oversample_foreground_percent
 
 
-def get_random_training(volume, label, i, nb_examples, normal):
+def get_random_training(volume, label,  normal):
     # Get a random corner to cut out a chunk for the training-set
 
     # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L294
-    if not get_do_oversample(i, nb_examples) or normal == True:
+    if do_not_do_oversample() or normal == True:
         # because the x y images are appended in list, the first order is z and the order in shape is z, x, y not x, y, z
         z = random.randint(0, volume.shape[0] - input_dim)
         x = random.randint(0, volume.shape[1] - input_dim)
@@ -85,13 +85,13 @@ def generate_data_set(data_original_path, data_set_path, normal=True, nb_example
 
     if nb_examples is None:
         # change to 100 if not double
-        nb_examples = 200 * len(volumes_path)
+        nb_examples = 100 * len(volumes_path)
 
     draw_progress_bar(0)
     for i in range(nb_examples):
         ind = i % len(volumes_path)
         volume_chunk, label_chunk = get_random_training(
-            volumes[ind], labels[ind], i, nb_examples, normal=normal
+            volumes[ind], labels[ind],  normal=normal
         )
 
         write_tiff_stack(
