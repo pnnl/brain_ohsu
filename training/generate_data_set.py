@@ -14,7 +14,8 @@ def do_not_do_oversample():
 
 def get_random_training(volume, label,  normal):
     # Get a random corner to cut out a chunk for the training-set
-
+    print('normal')
+    print(do_not_do_oversample() or normal == True)
     # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L294
     if do_not_do_oversample() or normal == True:
         # because the x y images are appended in list, the first order is z and the order in shape is z, x, y not x, y, z

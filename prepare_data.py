@@ -3,7 +3,7 @@ from training.label_processor import process_labels
 from utilities.utilities import *
 
 if __name__ == "__main__":
-    normal = sys.argv[2]
+    normal = sys.argv[2] == "True"
     base_path = os.path.abspath(__file__ + "/..")
     print(sys.argv[1])
     print(sys.argv[2])
@@ -25,6 +25,7 @@ if __name__ == "__main__":
         if len(sys.argv) > 3:
             nb_examples = int(sys.argv[3])
 
+        print(data_original_path, data_set_path, normal, nb_examples)
         generate_data_set(data_original_path, data_set_path, normal = normal, nb_examples=nb_examples)
 
     # Generate data set by cropping out 64 length cubes from larger chunks for training
@@ -39,7 +40,7 @@ if __name__ == "__main__":
         nb_examples = None
         if len(sys.argv) > 3:
             nb_examples = int(sys.argv[3])
-
+        print(data_original_path, data_set_path, normal, nb_examples)
         generate_data_set(data_original_path, data_set_path, normal = normal,  nb_examples=nb_examples)
 
 

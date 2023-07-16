@@ -11,8 +11,22 @@ if __name__ == "__main__":
     base_path = os.path.abspath(__file__ + "/..")
         # Load the network
     model_weight_list = [
-    
+    # all modifications
 
+    '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__rework_july14_flip_100_epoch_combo.hdf5',
+    # # one modificaiton
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_True_el_0.5_rot_0.5__rework_july14_flip_100_epoch_combo_stopped_early.hdf5',
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_True_el_1.0_rot_0__rework_july14_flip_100_epoch_combo.hdf5',
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_True_el_0_rot_1.0__rework_july14_flip_100_epoch_combo.hdf5',
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__rework_july14_flip_100_epoch_combo.hdf5',
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_False_flip_bol_True_el_1.0_rot_1.0__rework_july14_flip_100_epoch_combo.hdf5',
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_False_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__rework_july14_flip_100_epoch_combo.hdf5',
+    # # basic
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__rework_july14_flip_100_epoch_combo.hdf5',
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__rework_july14_flip_100_epoch_combo.hdf5',
+    # "/data/model-weights/trailmap_model.hdf5",
+    # '/data/model-weights/best_weights_checkpoint_all_aug_rework_july14_real_flip_normal_False.hdf5',
+    # '/data/model-weights/best_weights_checkpoint_all_aug_rework_july14_flip_normal_False.hdf5',
 
     #  "/data/model-weights/trailmap_model.hdf5",
     # '/data/model-weights/best_weights_checkpoint__flip_rework_july14__normal_True.hdf5',
@@ -21,9 +35,11 @@ if __name__ == "__main__":
     #  '/data/model-weights/best_weights_checkpoint_only_oversample_val_normal_rework_july14_flip_normal_True.hdf5',
     # '/data/model-weights/best_weights_checkpoint_only_aug_rework_july14_flip_normal_True.hdf5',
     #  '/data/model-weights/best_weights_checkpoint_only_rot_rework_july14_flip_normal_True.hdf5',
-    '/data/model-weights/best_weights_checkpoint_only_rot_aug_rework_july14_flip_normal_True.hdf5',
-    # '/data/model-weights/best_weights_checkpoint_all_rot_aug_rework_july14_flip_normal_True.hdf5'
+    # '/data/model-weights/best_weights_checkpoint_only_rot_aug_rework_july14_flip_normal_True.hdf5',
+    # '/data/model-weights/best_weights_checkpoint_all_rot_aug_rework_july14_flip_normal_False.hdf5'
 
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_False_aug_bol_False_lr_bol_False_flip_bol_False_el_1.0_rot_1.0__rework_july14_flip_100_epoch_combo_stopped_early.hdf5',
+    # '/data/model-weights/best_weights_checkpoint__oversample_bol_False_aug_bol_False_lr_bol_False_flip_bol_True_el_1.0_rot_1.0__rework_july14_flip_100_epoch_combo_stopped_early.hdf5',
          # '/data/model-weights/weights_050__only_oversample_rework_july14__normal_True.hdf5',
     # '/data/model-weights/weights_050__only_lr_rework_july14_normal_True.hdf5',
     # '/data/model-weights/weights_050__only_aug_20_rework_july14__normal_True.hdf5',
@@ -85,9 +101,10 @@ if __name__ == "__main__":
     combos = list(itertools.product(image_path, model_weight_list))
 
     input_batch, model_weight   = combos[int(sys.argv[-1])]
-
+    guass = sys.argv[1] == "True"
+    print(type(guass))
     base_path = os.path.abspath(__file__ + "/..")
-
+    
     input_batch = [input_batch]
     # Verify each path is a directory
     for input_folder in input_batch:
@@ -96,11 +113,11 @@ if __name__ == "__main__":
 
 
     weights_path = base_path +  model_weight
+ 
 
     model = get_net()
     model.load_weights(weights_path)
     overlap_var = 2.0
-    guass = True
     extra_name = ""
     name_folders = f'_overlap_{overlap_var}_{os.path.basename(weights_path)}_guass_{guass}_{extra_name}'
 
@@ -130,6 +147,8 @@ if __name__ == "__main__":
 
         # Segment the brain
         if guass:
+            print("guass")
+            print(guass)
             segment_brain_guass(input_folder, output_folder, model, overlap_var, name_folders)
         else:
             segment_brain_normal(input_folder, output_folder, model, name_folders)

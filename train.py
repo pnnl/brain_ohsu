@@ -10,30 +10,50 @@ from utilities.utilities import *
 if __name__ == "__main__":
 
     base_path = os.path.abspath(__file__ + "/..")
-    normal = sys.argv[1]
-    name_model = sys.argv[2]
+    combo_number = int(sys.argv[2])
+    name_model = sys.argv[1]
     batch_size = 6
-    epochs = 50
+    epochs = 100
     print(name_model)
-    print(normal)
+    combo = [
+        (True, False, False, True, 1, 1),
+        (False, False, False, True, 1.0, 1.0),
+        (False, False, False, True, 0, 1.0),
+        (False, False, False, True, 1.0, 0),
+        (False, False, False, True, .5, .5),
+        (False, False, False, False, 1.0, 1.0),
+        (False, True, True, True, 1.0, 1.0),
+        (True, False, True, True, 1.0, 1.0),
+        (True, True, False, True, 1.0, 1.0),
+        (True, False, True, True, 0, 1.0),
+        (True, False, True, True, 1.0, 0),
+        (True, False, True, True, 0.5, 0.5),
+        (True, True, True, True, 1.0, 1.0),
+        (True, True, True, False, 1.0, 1.0)
+    ]
 
+    oversample_bol, aug_bol, lr_bol, flip_bol, el_percentage, rot_percentage = combo[combo_number]
+    name_model = f'_oversample_bol_{oversample_bol}_aug_bol_{aug_bol}_lr_bol_{lr_bol}_flip_bol_{flip_bol}_el_{el_percentage}_rot_{rot_percentage}_{name_model}'
+    print(name_model)
     # change 200 to 100 if not doing double
-    training_path = base_path + f"/data/training/training-set_normal_{normal}_100"
+    training_path = base_path + f"/data/training/training-set_normal_{oversample_bol}_100"
     validation_path = base_path + f"/data/validation/validation-set_normal_True_100"
 
     # load data needs to correspond to volumne generator
-    x_train, y_train = load_data(training_path, normal = normal)
+    x_train, y_train = load_data(training_path, normal = aug_bol)
     x_validation, y_validation = load_data(validation_path, normal = True)
 
 
     datagen = VolumeDataGenerator(
-        horizontal_flip=True,
-        vertical_flip=True,
-        depth_flip=True,
+        horizontal_flip=flip_bol,
+        vertical_flip=flip_bol,
+        depth_flip=flip_bol,
         min_max_normalization=True,
         scale_range=0.1,
         scale_constant_range=0.2,
-        normal =normal
+        normal =aug_bol,
+         el_precentage = el_percentage,
+         rot_precentage = rot_percentage
     )
 
     datagen_val = VolumeDataGenerator(
@@ -52,13 +72,13 @@ if __name__ == "__main__":
     validation_generator =  datagen_val.flow(x_validation, y_validation, batch_size)
 
     now = datetime.now()
-    logdir = base_path + f"/data/tf-logs/{name_model}_normal_{normal}" +  now.strftime("%B-%d-%Y-%I:%M%p") + "/"
+    logdir = base_path + f"/data/tf-logs/{name_model}" +  now.strftime("%B-%d-%Y-%I:%M%p") + "/"
 
     tboard = TensorBoard(log_dir=logdir, histogram_freq=0, write_graph=True, write_images=False)
 
-    current_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/latest_model_{epochs:03d}_{name_model}_normal_{normal}.hdf5', verbose=1)
-    period_checkpoint = ModelCheckpoint(base_path + f'/data/model-weights/weights_{epochs:03d}_{name_model}_normal_{normal}.hdf5', period=20)
-    best_weight_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/best_weights_checkpoint_{name_model}_normal_{normal}.hdf5',
+    current_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/latest_model_{epochs:03d}_{name_model}.hdf5', verbose=1)
+    period_checkpoint = ModelCheckpoint(base_path + f'/data/model-weights/weights_{epochs:03d}_{name_model}.hdf5', period=20)
+    best_weight_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/best_weights_checkpoint_{name_model}.hdf5',
                                              verbose=1, save_best_only=True)
 
     
@@ -70,7 +90,7 @@ if __name__ == "__main__":
     # This will do transfer learning and start the model off with our current best model.
     # Remove the model.load_weight line below if you want to train from scratch
     model.load_weights(weights_path)
-    if normal== False:
+    if lr_bol == False:
         lr_scheduler = ReduceLROnPlateau()
         # use more steps in the epochs
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
@@ -98,3 +118,56 @@ if __name__ == "__main__":
                             verbose=1)
 
     model_name = 'model_' + now.strftime("%B-%d-%Y-%I:%M%p")
+
+
+    # def write_tiff_stack_paper(vol, fname):
+    #     # convert to number rather than decimal and to 8 so can adjust
+
+    #     im = Image.fromarray((vol[0] * 255).astype(np.uint8))
+    #     ims = []
+
+    #     for i in range(1, vol.shape[0]):
+    #         ims.append(Image.fromarray((vol[i] * 255).astype(np.uint8)))
+
+    #     im.save(fname, save_all=True, append_images=ims)
+    
+
+    # for i in range(1):
+    #     x2, y2 = next(validation_generator)
+
+    #     write_tiff_stack_paper(
+    #         x2[i, :, :, :, 0],
+    #         base_path + "/data/look/augment_spatial-input-n" + str(i) + "_test.tiff",
+    #     )
+    #     write_tiff_stack_paper(
+    #         y2[i, :, :, :, 0].astype(float),
+    #         base_path + "/data/look/augment_spatial-labeln" + str(i) + "_test.tiff",
+    #     )
+    #     write_tiff_stack_paper(
+    #         np.sum(y2[i, :, :, :, :].astype(float), -1),
+    #         base_path
+    #         + "/data/look/augment_spatial-label-all-infon"
+    #         + str(i)
+    #         + "_test.tiff",
+    #     )
+             
+        
+    # for i in range(1):
+    #     x2, y2 = next(train_generator)
+
+    #     write_tiff_stack_paper(
+    #         x2[i, :, :, :, 0],
+    #         base_path + "/data/look/augment_spatial-input-n" + str(i) + "_train.tiff",
+    #     )
+       
+    #     write_tiff_stack_paper(
+    #         y2[i, :, :, :, 0].astype(float),
+    #         base_path + "/data/look/augment_spatial-labeln" + str(i) + "_train.tiff",
+    #     )
+    #     write_tiff_stack_paper(
+    #         np.sum(y2[i, :, :, :, :].astype(float), -1),
+    #         base_path
+    #         + "/data/look/augment_spatial-label-all-infon"
+    #         + str(i)
+    #         + "_train.tiff",
+    #     )

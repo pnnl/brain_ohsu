@@ -43,6 +43,9 @@ class VolumeDataGenerator(Sequence):
         vertical_flip=False,
         depth_flip=False,
         normal=False,
+        el_precentage = 1.0,
+        rot_precentage = 1.0
+
     ):
         self.scale_constant_range = scale_constant_range
         self.scale_range = scale_range
@@ -58,6 +61,8 @@ class VolumeDataGenerator(Sequence):
         self.vertical_flip = vertical_flip
         self.depth_flip = depth_flip
         self.normal = normal
+        self.el_precentage = el_precentage
+        self.rot_precentage = rot_precentage
 
     def _shift_img(self, image, dx, dy):
         if dx == 0 and dy == 0:
@@ -371,8 +376,11 @@ class VolumeDataGenerator(Sequence):
                     y_gen[counter] = self._transform_vol(y_copy)
                 else:
                     # augment
+                    print("precent aug")
+                    print(self.el_precentage, self.rot_precentage)
+                    
                     x2, y2 = self.augment_spatial(
-                        data=x_copy, seg=y_copy, patch_size=x_copy.squeeze().shape
+                        data=x_copy, seg=y_copy, patch_size=x_copy.squeeze().shape, p_el_per_sample = self.el_precentage, p_rot_per_sample=self.rot_precentage,
                     )
                     # scale after augmenting
                     x2 = self._preprocess_vol(x2)
@@ -380,7 +388,6 @@ class VolumeDataGenerator(Sequence):
                     # flip
                     x2 = self._transform_vol(x2)
                     y2 = self._transform_vol(y2)
-
                     y2 = np.copy(crop_numpy(offset, offset, offset, y2))
                     x_gen[counter] = x2
                     y_gen[counter] = y2

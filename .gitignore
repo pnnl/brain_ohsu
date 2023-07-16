@@ -7,11 +7,5 @@ data/training/training-set/volumes/*
 data/training/training-set/labels/*
 data/testing/test-set/labels/*
 data/testing/test-set/volumes/*
-data/testing/seg*/*
-data/validation/seg*/*
-data/training/seg*/*
-data/*/*/*
-data/*
 data*
 *.sbatch
-*.hdf5
