@@ -66,7 +66,6 @@ def adjusted_accuracy(y_true, y_pred):
     # get true and prediced axons over all labeled catagories
     mask_true = tf.cast(tf.boolean_mask(axons_true, mask), tf.float32)
     mask_pred = tf.cast(tf.boolean_mask(y_pred, mask), tf.float32)
-    print(K.mean(K.round(K.clip(mask_true, 0, 1))))
     # anything predicted over .5 is good
     return K.mean(K.equal(mask_true, K.round(mask_pred)))
 
@@ -213,7 +212,7 @@ def get_net():
 
 
     for layer in model.layers:
-        if layer.name in ['input_1', 'conv3d', 'conv3d_1', 'max_pooling3d']: #, 'conv3d', 'conv3d_1', 'max_pooling3d']: # ['input_1', 'conv3d', 'conv3d_1', 'max_pooling3d']: #['conv3d_6', 'conv3d_7']: ##['conv3d_13', 'conv3d_14']:
+        if layer.name in ['conv3d_13', 'conv3d_14']: #,  # ['input_1', 'conv3d', 'conv3d_1', 'max_pooling3d']: #['conv3d_6', 'conv3d_7']: ##['conv3d_13', 'conv3d_14']:
             layer.trainable = True
             print(layer.name)
             print(layer.trainable)
@@ -221,7 +220,7 @@ def get_net():
             layer.trainable = False
 
     
-    model.compile(optimizer=Adam(lr=0.00005), loss=weighted_binary_crossentropy,
+    model.compile(optimizer=Adam(lr=0.0001), loss=weighted_binary_crossentropy,
                   metrics=[axon_precision, axon_recall, f1_score, artifact_precision, edge_axon_precision, adjusted_accuracy, edge_f1_score], run_eagerly=True)
 
     return model
