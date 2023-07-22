@@ -12,3 +12,5 @@ data*
 data/validation/validation-set/labels/*
 data/validation/validation-set/labels/*.tiff
 null_cubes/*.tif
+augment_add_trialmap_cleanup.py
+inference/gaussian_overlap_functions_uunet.py
