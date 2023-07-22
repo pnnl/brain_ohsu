@@ -43,6 +43,7 @@ def load_data(data_path, nb_examples=None, normal =  True):
         if normal == True:
             offset = (input_dim - output_dim)//2
         else:
+            # will crop after augmentation
             offset = 0
 
         background = np.copy(crop_numpy(offset, offset, offset, y[i]))

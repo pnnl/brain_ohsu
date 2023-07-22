@@ -4,9 +4,11 @@ from utilities.utilities import *
 
 if __name__ == "__main__":
     normal = sys.argv[2] == "True"
+    add_suffix = sys.argv[3] 
     base_path = os.path.abspath(__file__ + "/..")
     print(sys.argv[1])
     print(sys.argv[2])
+    print(sys.argv[3])
     # Must include operation being done.
     # e.g. generate_data_set
     if len(sys.argv) < 2:
@@ -16,13 +18,13 @@ if __name__ == "__main__":
     if sys.argv[1] == "generate_validation_set":
 
         # Validation directories
-        data_original_path = base_path + f"/data/validation/validation-original"
+        data_original_path = base_path + f"/data/validation/validation-original{add_suffix}"
         # change path here to 100 if not double
-        data_set_path = base_path + f"/data/validation/validation-set_normal_{normal}_100"
+        data_set_path = base_path + f"/data/validation/validation-set_normal_{normal}{add_suffix}"
 
         # Default value is None
         nb_examples = None
-        if len(sys.argv) > 3:
+        if len(sys.argv) > 4:
             nb_examples = int(sys.argv[3])
 
         print(data_original_path, data_set_path, normal, nb_examples)
@@ -32,13 +34,13 @@ if __name__ == "__main__":
     elif sys.argv[1] == "generate_training_set":
 
         # Training directories
-        data_original_path = base_path + "/data/training/training-original"
+        data_original_path = base_path + f"/data/training/training-original{add_suffix}"
          # change path here to 100 if not double
-        data_set_path = base_path + f"/data/training/training-set_normal_{normal}_100"
+        data_set_path = base_path + f"/data/training/training-set_normal_{normal}{add_suffix}"
 
         # Default value is None
         nb_examples = None
-        if len(sys.argv) > 3:
+        if len(sys.argv) > 4:
             nb_examples = int(sys.argv[3])
         print(data_original_path, data_set_path, normal, nb_examples)
         generate_data_set(data_original_path, data_set_path, normal = normal,  nb_examples=nb_examples)

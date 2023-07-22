@@ -107,15 +107,22 @@ def write_folder_stack(vol, path):
         cv2.imwrite(fname, vol[i])
 
 
-def read_tiff_stack(path):
+def read_tiff_stack(path, dim_offset = 0):
     img = Image.open(path)
     images = []
     for i in range(img.n_frames):
         img.seek(i)
         slice = np.array(img)
         images.append(slice)
+    new_array = np.array(images)
+    pad_array = np.pad(new_array , ( (dim_offset, dim_offset), (dim_offset, dim_offset),
+                                 (dim_offset, dim_offset)), 'constant', constant_values=(0, 0))
+    if dim_offset !=0:
+        print("padding: " + str(dim_offset))
+        print(new_array.shape)
+        print(pad_array.shape)
 
-    return np.array(images)
+    return pad_array 
 
 
 # get half of tif for train and test for now

@@ -10,34 +10,29 @@ from utilities.utilities import *
 if __name__ == "__main__":
 
     base_path = os.path.abspath(__file__ + "/..")
-    combo_number = int(sys.argv[2])
+    combo_number = int(sys.argv[-1])
     name_model = sys.argv[1]
     batch_size = 6
-    epochs = 100
+    epochs = 50
     print(name_model)
     combo = [
-        (True, False, False, True, 1, 1),
-        (False, False, False, True, 1.0, 1.0),
-        (False, False, False, True, 0, 1.0),
-        (False, False, False, True, 1.0, 0),
-        (False, False, False, True, .5, .5),
-        (False, False, False, False, 1.0, 1.0),
-        (False, True, True, True, 1.0, 1.0),
-        (True, False, True, True, 1.0, 1.0),
-        (True, True, False, True, 1.0, 1.0),
-        (True, False, True, True, 0, 1.0),
-        (True, False, True, True, 1.0, 0),
-        (True, False, True, True, 0.5, 0.5),
-        (True, True, True, True, 1.0, 1.0),
-        (True, True, True, False, 1.0, 1.0)
+ 
+        # (True, False, True, True, 0.5, 0.5),
+        (True, False, False, True, 0.5, 0.5, True, .2, "_val_2_test_5"),
+        (True, True, True, True, 1.0, 1.0, True, .2, "_val_2_test_5"),
+        (True, True, True, False, 1.0, 1.0, True, .2, "_val_2_test_5"),
+
+        (True, False, False, True, 0.5, 0.5, True, .2, "_val_5_test_1"),
+        (True, True, True, True, 1.0, 1.0, True, .2, "_val_5_test_1"),
+        (True, True, True, False, 1.0, 1.0, True, .2, "_val_5_test_1")
     ]
 
-    oversample_bol, aug_bol, lr_bol, flip_bol, el_percentage, rot_percentage = combo[combo_number]
-    name_model = f'_oversample_bol_{oversample_bol}_aug_bol_{aug_bol}_lr_bol_{lr_bol}_flip_bol_{flip_bol}_el_{el_percentage}_rot_{rot_percentage}_{name_model}'
+    oversample_bol, aug_bol, lr_bol, flip_bol, el_percentage, rot_percentage, encode_train, background_weight, training_data = combo[combo_number]
+    name_model = f'_oversample_bol_{oversample_bol}_aug_bol_{aug_bol}_lr_bol_{lr_bol}_flip_bol_{flip_bol}_el_{el_percentage}_rot_{rot_percentage}__encode_{encode_train}_background_weight_{background_weight}_training_{training_data}_{name_model}'
     print(name_model)
     # change 200 to 100 if not doing double
-    training_path = base_path + f"/data/training/training-set_normal_{oversample_bol}_100"
-    validation_path = base_path + f"/data/validation/validation-set_normal_True_100"
+    training_path = base_path + f"/data/training/training-set_normal_{oversample_bol}_100{training_data}"
+    validation_path = base_path + f"/data/validation/validation-set_normal_True_100{training_data}"
 
     # load data needs to correspond to volumne generator
     x_train, y_train = load_data(training_path, normal = aug_bol)

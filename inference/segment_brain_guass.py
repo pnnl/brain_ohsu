@@ -20,10 +20,7 @@ threshold = 0.00
 # Edge width between the output and input volumes
 dim_offset = (input_dim - output_dim) // 2
 
-# 0.9106592 1.1
-# 0.8775488 2
-# 0.9106592 1
-# 0.93280274 original
+
 """
 Progress bar to indicate status of the segment_brain function
 """
@@ -138,10 +135,12 @@ def loss_inference(input_folder, output_folder):
     output_dict = {}
     y_pred = np.array(vol)
     # prediction has dim off set padding on x and y. only copied files from dim_off + on the z axis, so that's already alright
+    # dim_offset is zero, so removing
     y_pred = y_pred[:, dim_offset:-dim_offset, dim_offset:-dim_offset]
-    y_true = y_true[
-        dim_offset:-dim_offset, dim_offset:-dim_offset, dim_offset:-dim_offset, :
-    ]
+    # y_true is already an offset smaller
+    # y_true = y_true[
+    #     dim_offset:-dim_offset, dim_offset:-dim_offset, dim_offset:-dim_offset, :
+    # ]
 
     # add first dimension 1 (normally batch number)
     tensor1 = tf.convert_to_tensor(np.expand_dims(y_true, axis=0))
@@ -390,7 +389,7 @@ def helper_segment_section(model, section, gaussian_importance_map, overlap_var)
     # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
     #                                 (dim_offset, dim_offset)), 'edge')
 
-    temp_section = np.pad(section, ((0, 0), (0, 0), (0, 0)), "edge")
+    temp_section = section #np.pad(section, ((0, 0), (0, 0), (0, 0)), "edge")
 
     # keep track of sum of gaussian muliplier
     # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/network_architecture/neural_network.py#L363

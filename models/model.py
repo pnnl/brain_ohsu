@@ -48,7 +48,7 @@ def create_weighted_binary_crossentropy(axon_weight, background_weight, artifact
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
-    loss = create_weighted_binary_crossentropy(1.5, 0.2, 0.8, 0.05)(y_true, y_pred)
+    loss = create_weighted_binary_crossentropy(1.5, .2, 0.8, 0.05)(y_true, y_pred)
     return loss
 
 
@@ -66,7 +66,7 @@ def adjusted_accuracy(y_true, y_pred):
     # get true and prediced axons over all labeled catagories
     mask_true = tf.cast(tf.boolean_mask(axons_true, mask), tf.float32)
     mask_pred = tf.cast(tf.boolean_mask(y_pred, mask), tf.float32)
-
+    print(K.mean(K.round(K.clip(mask_true, 0, 1))))
     # anything predicted over .5 is good
     return K.mean(K.equal(mask_true, K.round(mask_pred)))
 
@@ -81,6 +81,7 @@ def axon_precision(y_true, y_pred):
     mask_pred = tf.cast(tf.boolean_mask(y_pred[:, :, :, :, 0], mask), tf.float32)
 
     true_positives = K.sum(K.round(K.clip(mask_true * mask_pred, 0, 1)))
+
     predicted_positives = K.sum(K.round(K.clip(mask_pred, 0, 1)))
 
     precision = true_positives / (predicted_positives + K.epsilon())
@@ -98,8 +99,6 @@ def axon_recall(y_true, y_pred):
 
     true_positives = K.sum(K.round(K.clip(mask_true * mask_pred, 0, 1)))
     actual_positives = K.sum(K.round(K.clip(mask_true, 0, 1)))
-
-
     recall = true_positives / (actual_positives + K.epsilon())
 
     return recall
@@ -151,6 +150,7 @@ def edge_f1_score(y_true, y_pred):
     recall = axon_recall(y_true, y_pred)
 
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
+
 
 
 def get_net():
@@ -206,13 +206,22 @@ def get_net():
     conv7 = Conv3D(64, (3, 3, 3), activation="relu")(batch7)
     batch7 = BatchNormalization()(conv7)
 
-    # Output dim is (36, 36, 36)
     preds = Conv3D(1, (1, 1, 1), activation="sigmoid")(batch7)
     model = Model(inputs=input, outputs=preds)
 
     # rlrop = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=100)
 
-    model.compile(optimizer=Adam(lr=0.001, decay=0.00), loss=weighted_binary_crossentropy,
-                  metrics=[axon_precision, axon_recall, f1_score, artifact_precision, edge_axon_precision, adjusted_accuracy], run_eagerly=True)
+
+    for layer in model.layers:
+        if layer.name in ['input_1', 'conv3d', 'conv3d_1', 'max_pooling3d']: #, 'conv3d', 'conv3d_1', 'max_pooling3d']: # ['input_1', 'conv3d', 'conv3d_1', 'max_pooling3d']: #['conv3d_6', 'conv3d_7']: ##['conv3d_13', 'conv3d_14']:
+            layer.trainable = True
+            print(layer.name)
+            print(layer.trainable)
+        else:
+            layer.trainable = False
+
+    
+    model.compile(optimizer=Adam(lr=0.00005), loss=weighted_binary_crossentropy,
+                  metrics=[axon_precision, axon_recall, f1_score, artifact_precision, edge_axon_precision, adjusted_accuracy, edge_f1_score], run_eagerly=True)
 
     return model

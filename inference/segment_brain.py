@@ -223,7 +223,7 @@ def helper_segment_section(model, section):
     #                                 (dim_offset, dim_offset)), 'constant', constant_values=(0, 0))
     # temp_section = np.pad(section, ((0, 0), (dim_offset, dim_offset),
     #                                 (dim_offset, dim_offset)), 'edge')
-    temp_section = np.pad(section, ((0, 0), (0, 0), (0, 0)), "edge")
+    temp_section = section #np.pad(section, ((0, 0), (0, 0), (0, 0)), "edge")
 
     # Add most chunks aligned with top left corner
     for x in range(0, temp_section.shape[1] - input_dim, output_dim):
@@ -252,7 +252,7 @@ def helper_segment_section(model, section):
     # Keeps track of which coord we are at
     i = 0
 
-    # Generate dummy segmentation
+    # Generate dummy segmentation, the dim_offset will stay zero
     seg = np.zeros(temp_section.shape).astype("float32")
 
     # Loop through each possible coordinate

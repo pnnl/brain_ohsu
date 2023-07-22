@@ -9,3 +9,6 @@ data/testing/test-set/labels/*
 data/testing/test-set/volumes/*
 data*
 *.sbatch
+data/validation/validation-set/labels/*
+data/validation/validation-set/labels/*.tiff
+null_cubes/*.tif
