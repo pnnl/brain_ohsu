@@ -13,28 +13,26 @@ if __name__ == "__main__":
     combo_number = int(sys.argv[-1])
     name_model = sys.argv[1]
     batch_size = 6
-    epochs = 100
+    epochs = 50
     print(name_model)
     combo = [
-        # (False, True, True, False, 1.0, 1.0, "encode_layer","0001", "_val_2_test_5"),
-        # (True, False, True, False, 0, 1.0, "encode_layer","0001", "_val_2_test_5"),
-        # (True, False, True, False, 1.0, 0, "encode_layer","0001", "_val_2_test_5"),
-        # (True, True, False, False, 1.0, 1.0, "encode_layer","0001", "_val_2_test_5"),
-        # (True, True, True, True, 1.0, 1.0, "encode_layer","0001", "_val_2_test_5"),
-        # (True, True, True, 1.0, 1.0, "all_layer", "001", "_test_1_4"),
-        # (True, True, True, 1.0, 1.0, "encode_layer", "0001", "_test_1_4"),
-        # (True, True, True, 1.0, 1.0, "encode_layer", "0001", "_test_2_6"),
-        # (True, True, True, 1.0, 1.0, "encode_layer", "0001", "_test_1_4"),
-        (True, True, False, 1.0, 1.0, "last_layer", "0001", "_test_3_5"),
-        # (True, True, True, 1.0, 1.0, "encode_layer", "0001", "_test_3_5"),
+ 
+        # (True, False, True, True, 0.5, 0.5),
+        (True, False, False, True, 0.5, 0.5, True, .2, "_val_2_test_5"),
+        (True, True, True, True, 1.0, 1.0, True, .2, "_val_2_test_5"),
+        (True, True, True, False, 1.0, 1.0, True, .2, "_val_2_test_5"),
+
+        (True, False, False, True, 0.5, 0.5, True, .2, "_val_5_test_1"),
+        (True, True, True, True, 1.0, 1.0, True, .2, "_val_5_test_1"),
+        (True, True, True, False, 1.0, 1.0, True, .2, "_val_5_test_1")
     ]
 
-    aug_bol, lr_bol, flip_bol, el_percentage, rot_percentage, encode_train, loss_weight, training_data = combo[combo_number]
-    name_model = f'aug_bol_{aug_bol}_lr_bol_{lr_bol}_flip_bol_{flip_bol}_el_{el_percentage}_rot_{rot_percentage}__encode_{encode_train}_loss_start_{loss_weight}_training_{training_data}_{name_model}'
+    oversample_bol, aug_bol, lr_bol, flip_bol, el_percentage, rot_percentage, encode_train, background_weight, training_data = combo[combo_number]
+    name_model = f'_oversample_bol_{oversample_bol}_aug_bol_{aug_bol}_lr_bol_{lr_bol}_flip_bol_{flip_bol}_el_{el_percentage}_rot_{rot_percentage}__encode_{encode_train}_background_weight_{background_weight}_training_{training_data}_{name_model}'
     print(name_model)
     # change 200 to 100 if not doing double
-    training_path = base_path + f"/data/training/training-set{training_data}"
-    validation_path = base_path + f"/data/validation/validation-set{training_data}"
+    training_path = base_path + f"/data/training/training-set_normal_{oversample_bol}_100{training_data}"
+    validation_path = base_path + f"/data/validation/validation-set_normal_True_100{training_data}"
 
     # load data needs to correspond to volumne generator
     x_train, y_train = load_data(training_path, normal = aug_bol)
@@ -49,8 +47,8 @@ if __name__ == "__main__":
         scale_range=0.1,
         scale_constant_range=0.2,
         normal =aug_bol,
-        el_precentage = el_percentage,
-        rot_precentage = rot_percentage
+         el_precentage = el_percentage,
+         rot_precentage = rot_percentage
     )
 
     datagen_val = VolumeDataGenerator(
@@ -60,9 +58,7 @@ if __name__ == "__main__":
         min_max_normalization=True,
         scale_range=0,
         scale_constant_range=0,
-        normal = True,
-        el_precentage = el_percentage,
-        rot_precentage = rot_percentage
+        normal = True
     )
 
 
@@ -94,10 +90,10 @@ if __name__ == "__main__":
         # use more steps in the epochs
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
         model.fit_generator(train_generator,
-                            steps_per_epoch=(7*75)//batch_size,
+                            steps_per_epoch=400//batch_size,
                             epochs=epochs,
                             validation_data=validation_generator,
-                            validation_steps= (7*25)//batch_size,
+                            validation_steps=100//batch_size,
                             use_multiprocessing=False,
                             workers=1,
                             callbacks=[lr_scheduler, tboard, period_checkpoint, best_weight_checkpoint],
@@ -107,10 +103,10 @@ if __name__ == "__main__":
 
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
         model.fit_generator(train_generator,
-                            steps_per_epoch=(7*75)//batch_size,
+                            steps_per_epoch=400//batch_size,
                             epochs=epochs,
                             validation_data=validation_generator,
-                            validation_steps=(7*25)//batch_size,
+                            validation_steps=100//batch_size,
                             use_multiprocessing=False,
                             workers=1,
                             callbacks=[tboard, period_checkpoint, best_weight_checkpoint],

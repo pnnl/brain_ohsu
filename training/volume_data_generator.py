@@ -375,6 +375,10 @@ class VolumeDataGenerator(Sequence):
                     x_gen[counter] = self._transform_vol(preprocess_vol)
                     y_gen[counter] = self._transform_vol(y_copy)
                 else:
+                    # augment
+                    print("precent aug")
+                    print(self.el_precentage, self.rot_precentage)
+                    
                     x2, y2 = self.augment_spatial(
                         data=x_copy, seg=y_copy, patch_size=x_copy.squeeze().shape, p_el_per_sample = self.el_precentage, p_rot_per_sample=self.rot_precentage,
                     )

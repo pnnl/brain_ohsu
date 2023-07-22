@@ -4,22 +4,49 @@ from utilities.utilities import *
 import os
 import shutil
 
+oversample_foreground_percent = 0.3
 
 dim_offset = (input_dim - output_dim) // 2
 
+# https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L204
+def do_not_do_oversample():
+    return np.random.uniform() > oversample_foreground_percent
 
-def get_random_training(volume, label,  training_example):
-    val_amount = max(input_dim, volume.shape[0]//4)
-    if training_example:
-        z = random.randint(0, volume.shape[0] - input_dim - (val_amount +  1))
+
+def get_random_training(volume, label,  normal):
+    # Get a random corner to cut out a chunk for the training-set
+    print('normal')
+    print(do_not_do_oversample() or normal == True)
+    # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L294
+    if do_not_do_oversample() or normal == True:
+        # because the x y images are appended in list, the first order is z and the order in shape is z, x, y not x, y, z
+        z = random.randint(0, volume.shape[0] - input_dim)
+        x = random.randint(0, volume.shape[1] - input_dim)
+        y = random.randint(0, volume.shape[2] - input_dim)
     else:
-        z = random.randint(volume.shape[0] - val_amount, volume.shape[0] - input_dim )
-    x = random.randint(0, volume.shape[1] - input_dim)
-    y = random.randint(0, volume.shape[2] - input_dim)
-    
-    print(z)
-    print(z + input_dim)
-    print("")
+        voxels_of_that_class = np.argwhere(
+            label[
+                : label.shape[0] - input_dim,
+                : label.shape[1] - input_dim,
+                : label.shape[2] - input_dim,
+            ]
+            == 2
+        )
+
+        if len(voxels_of_that_class) > 0:
+            selected_voxel = voxels_of_that_class[
+                np.random.choice(len(voxels_of_that_class))
+            ]
+            # selected voxel is top, left, back corner
+            z = selected_voxel[0]
+            x = selected_voxel[1]
+            y = selected_voxel[2]
+        else:
+            # If the image does not contain any foreground classes, we fall back to random cropping
+
+            z = random.randint(0, volume.shape[0] - input_dim)
+            x = random.randint(0, volume.shape[1] - input_dim)
+            y = random.randint(0, volume.shape[2] - input_dim)
 
     volume_chunk = crop_cube(x, y, z, volume, input_dim)
     label_chunk = crop_cube(x, y, z, label, input_dim)
@@ -27,7 +54,7 @@ def get_random_training(volume, label,  training_example):
     return volume_chunk, label_chunk
 
 
-def generate_data_set(data_original_path, data_set_path, training_example, num_volumes):
+def generate_data_set(data_original_path, data_set_path, normal=True, nb_examples=None):
     # Get the directory for volumes and labels sorted
     volumes_path = sorted(get_dir(data_original_path + "/volumes"))
     labels_path = sorted(get_dir(data_original_path + "/labels"))
@@ -56,18 +83,30 @@ def generate_data_set(data_original_path, data_set_path, training_example, num_v
     for i in range(len(volumes_path)):
         volumes.append(read_tiff_stack(volumes_path[i]))
         labels.append(read_tiff_stack(labels_path[i], dim_offset = dim_offset))
+        print('starting shape')
+        print(len(volumes))
+        print(volumes[i].shape)
+        print(len(labels))
+        print(labels[i].shape)
+        # write_tiff_stack(
+        #     volumes[i], data_set_path + "/volumes/volume-test_label_chunk" + str(i) + ".tiff"
+        # )
 
+        # write_tiff_stack(
+        #     labels[i], data_set_path + "/labels/label-test" + str(i) + ".tiff"
+        # )
 
-    nb_examples = num_volumes * len(volumes_path)
+    if nb_examples is None:
+        # change to 100 if not double
+        nb_examples = 100 * len(volumes_path)
 
     draw_progress_bar(0)
-    print("training_example: " + str(training_example))
     for i in range(nb_examples):
         ind = i % len(volumes_path)
         volume_chunk, label_chunk = get_random_training(
-            volumes[ind], labels[ind],  training_example = training_example
+            volumes[ind], labels[ind],  normal=normal
         )
-        print(np.unique(label_chunk))
+
         write_tiff_stack(
             volume_chunk, data_set_path + "/volumes/volume-" + str(i) + ".tiff"
         )
