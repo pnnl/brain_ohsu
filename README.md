@@ -29,6 +29,7 @@ python3 segment_brain_batch.py True "_test_1" {combination_number}
 ## Training
 
 Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. 
+For preparing data:
 * When preparing the data for training, the location of the  data is set directly with the prepare_data.py file at data_original_path (input) and data_set_path (output) for each of the functions.
 * The data_set_path should match the name provided as the training data under train.py (training_path and validation_path).
 * The number of examples should be set directly within prepare_data with the nb_examples variable.
