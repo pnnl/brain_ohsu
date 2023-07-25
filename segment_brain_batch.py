@@ -15,7 +15,6 @@ if __name__ == "__main__":
         # Load the network
     model_weight_list = [
     
-    
     # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_True_background_weight_0.4_training__test_5__july19.hdf5",
     # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_True_background_weight_0.4_training__test_5__july19.hdf5",
     # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.4_training__test_1__july19.hdf5",
@@ -30,6 +29,9 @@ if __name__ == "__main__":
 
     # "best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
     # "best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
+    # "best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
+
+
     # "best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
     "/data/model-weights/trailmap_model.hdf5",
 

@@ -70,7 +70,7 @@ def get_dir(path):
 
 dim_offset = 14
 file_name2 = "seg-_overlap_2.0_trailmap_model.hdf5_guass_False_testing-original_val_5_test_1"
-file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_True_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
+file_name = "normal_test_1" #"seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
 slice_num = 74
 # pred starts at dim_offset in
 pred_num = slice_num + dim_offset
@@ -114,7 +114,7 @@ imgray_pred[tp_locs[0], tp_locs[1], :] = (0, 0, 255)  # blue
 fn_locs = np.where((pred_image_array < 0.5) & (truth_array == 2))
 print("falsenegatives")
 print(len(fn_locs[0]))
-imgray_pred[fn_locs[0], fn_locs[1], :] = (255,165,0) # orange false negative
+imgray_pred[fn_locs[0], fn_locs[1], :] = (255, 102, 0) # orange false negative
 fp_locs = np.where((pred_image_array >= 0.5) & (truth_array != 2))
 print("false pos")
 print(len(fp_locs[0]))
