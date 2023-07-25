@@ -83,18 +83,7 @@ def generate_data_set(data_original_path, data_set_path, normal=True, nb_example
     for i in range(len(volumes_path)):
         volumes.append(read_tiff_stack(volumes_path[i]))
         labels.append(read_tiff_stack(labels_path[i], dim_offset = dim_offset))
-        print('starting shape')
-        print(len(volumes))
-        print(volumes[i].shape)
-        print(len(labels))
-        print(labels[i].shape)
-        # write_tiff_stack(
-        #     volumes[i], data_set_path + "/volumes/volume-test_label_chunk" + str(i) + ".tiff"
-        # )
 
-        # write_tiff_stack(
-        #     labels[i], data_set_path + "/labels/label-test" + str(i) + ".tiff"
-        # )
 
     if nb_examples is None:
         # change to 100 if not double

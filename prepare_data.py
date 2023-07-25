@@ -3,8 +3,8 @@ from training.label_processor import process_labels
 from utilities.utilities import *
 
 if __name__ == "__main__":
-    normal = sys.argv[2] == "True"
-    add_suffix = sys.argv[3] 
+    normal = sys.argv[3] == "True"
+    add_suffix = sys.argv[2] 
     base_path = os.path.abspath(__file__ + "/..")
     print(sys.argv[1])
     print(sys.argv[2])
@@ -25,7 +25,7 @@ if __name__ == "__main__":
         # Default value is None
         nb_examples = None
         if len(sys.argv) > 4:
-            nb_examples = int(sys.argv[3])
+            nb_examples = int(sys.argv[4])
 
         print(data_original_path, data_set_path, normal, nb_examples)
         generate_data_set(data_original_path, data_set_path, normal = normal, nb_examples=nb_examples)
@@ -41,7 +41,8 @@ if __name__ == "__main__":
         # Default value is None
         nb_examples = None
         if len(sys.argv) > 4:
-            nb_examples = int(sys.argv[3])
+            nb_examples = int(sys.argv[4])
+            
         print(data_original_path, data_set_path, normal, nb_examples)
         generate_data_set(data_original_path, data_set_path, normal = normal,  nb_examples=nb_examples)
 

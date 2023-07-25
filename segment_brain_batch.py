@@ -8,40 +8,22 @@ import itertools
 if __name__ == "__main__":
 
 
-    guass = sys.argv[1] == "True"
+    gauss = sys.argv[1] == "True"
     add_suffix = sys.argv[2]
 
     base_path = os.path.abspath(__file__ + "/..")
         # Load the network
     model_weight_list = [
-    
-    # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_True_background_weight_0.4_training__test_5__july19.hdf5",
-    # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_True_background_weight_0.4_training__test_5__july19.hdf5",
-    # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.4_training__test_1__july19.hdf5",
-
-    # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_True_background_weight_0.2_training__test_5__july19.hdf5",
-    # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_True_background_weight_0.2_training__test_5__july19.hdf5",
-    # "/data/model-weights/best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.2_training__test_5__july19.hdf5",
-    
-    # "best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_True_background_weight_0.4_training__test_1__july19.hdf5",
-    # "best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_True_background_weight_0.4_training__test_1__july19.hdf5",
-    # "best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.4_training__test_1__july19.hdf5",
-
-    # "best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
-    # "best_weights_checkpoint__oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
-    # "best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
-
-
-    # "best_weights_checkpoint__oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_True_background_weight_0.2_training__test_1__july19.hdf5",
+    "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_last_layer_loss_0.0001_training__val_1_test_5__july23.hdf5",
     "/data/model-weights/trailmap_model.hdf5",
-
     ]
 
-    image_path  =  [ base_path + f"/data/testing/testing-original{add_suffix}", base_path + f"/data/validation/validation-original{add_suffix}"]
+    # data testing
+    image_path  =  [ base_path + f"/data/testing/testing-original{add_suffix}"]
     combos = list(itertools.product(image_path, model_weight_list))
 
     input_batch, model_weight   = combos[int(sys.argv[-1])]
-    print(type(guass))
+    print(type(gauss))
     base_path = os.path.abspath(__file__ + "/..")
     
     input_batch = [input_batch]
@@ -58,7 +40,7 @@ if __name__ == "__main__":
     model.load_weights(weights_path)
     overlap_var = 2.0
     extra_name = ""
-    name_folders = f'_overlap_{overlap_var}_{os.path.basename(weights_path)}_guass_{guass}_{extra_name}'
+    name_folders = f'_overlap_{overlap_var}_{os.path.basename(weights_path)}_gauss_{gauss}_{extra_name}'
 
     for input_folder in input_batch:
 
@@ -85,10 +67,10 @@ if __name__ == "__main__":
         print("output_folder: " + output_folder)
 
         # Segment the brain
-        if guass:
-            print("guass")
-            print(guass)
-            segment_brain_guass(input_folder, output_folder, model, overlap_var, name_folders)
+        if gauss:
+            print("gauss")
+            print(gauss)
+            segment_brain_gauss(input_folder, output_folder, model, overlap_var, name_folders)
         else:
             segment_brain_normal(input_folder, output_folder, model, name_folders)
 

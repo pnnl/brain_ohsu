@@ -5,7 +5,7 @@ import time
 import cv2
 import sys
 from PIL import Image
-from inference.segment_brain_guass import loss_inference
+from inference.segment_brain_gauss import loss_inference
 import csv
 
 from utilities.utilities import *
@@ -284,9 +284,5 @@ def helper_segment_section(model, section):
             (z, x, y) = batch_coords[j] + dim_offset
             seg[z : z + output_dim, x : x + output_dim, y : y + output_dim] = output[j]
 
-    cropped_seg = seg[
-        :,
-        dim_offset : dim_offset + section.shape[1],
-        dim_offset : dim_offset + section.shape[2],
-    ]
+    seg = seg[:, dim_offset:-dim_offset, dim_offset:-dim_offset]
     return seg  # cropped_seg
