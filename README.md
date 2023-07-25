@@ -60,7 +60,7 @@ The work is adapted from code created by:
 * **Drew Friedmann**
 
 The modified code was used in a paper by:
-Marjolein Oostrom1, Michael A. Muniak2, Rogene Eichler West1, Sarah Akers1, Paritosh Pande3, Moses Obiri1, Wei Wang4, Kasey Bowyer4, Zhuhao Wu4, Lisa Bramer3, Tianyi Mao2*, Bobbie Jo Webb-Robertson3*
+Marjolein Oostrom, Michael A. Muniak, Rogene Eichler West, Sarah Akers, Paritosh Pande, Moses Obiri, Wei Wang, Kasey Bowyer, Zhuhao Wu, Lisa Bramer, Tianyi Mao*, Bobbie Jo Webb-Robertson*
 
 
 ## Acknowledgments
