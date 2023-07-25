@@ -1,7 +1,7 @@
 
-# TRAILMAP
+# TRAILMAP Modification
 
-This a modification of the code described in  [Mapping Mesoscale Axonal Projections in the Mouse Brain Using A 3D Convolutional Network](https://www.biorxiv.org/content/10.1101/812644v1.full) Friedmann D, Pun A, et al and located at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP)
+This is a modification of the code described in  [Mapping Mesoscale Axonal Projections in the Mouse Brain Using A 3D Convolutional Network](https://www.biorxiv.org/content/10.1101/812644v1.full) Friedmann D, Pun A, et al and located at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP). The original code attribution can be found here: [Github TrailMap](https://github.com/AlbertPun/TRAILMAP).
 
 ## Getting Started - Installation
 
@@ -59,10 +59,42 @@ The work is adapted from code created by:
 * **Albert Pun**
 * **Drew Friedmann**
 
-## License
-This work is adapted from a project licensed under the MIT License
+The modified code was used in a paper by:
+Marjolein Oostrom1, Michael A. Muniak2, Rogene Eichler West1, Sarah Akers1, Paritosh Pande3, Moses Obiri1, Wei Wang4, Kasey Bowyer4, Zhuhao Wu4, Lisa Bramer3, Tianyi Mao2*, Bobbie Jo Webb-Robertson3*
+
 
 ## Acknowledgments
+
+
+MO, RMEW, SA, MO, LB, BJWR were supported by the Laboratory Directed Research and Development at Pacific Northwest National Laboratory (PNNL), a Department of Energy facility operated by Battelle under contract DE-AC05-76RLO01830. WW, KB, and ZW were supported in part by a NIH/BRAIN Initiative Grant RF1MH128969. MAM and TM were supported by two NIH/BRAIN Initiative Grants R01NS104944, RF1MH120119 and NIH R01NS081071. This research is affiliated with the Pacific northwest bioMedical Innovation Co-laboratory (PMedIC) collaboration between OHSU and PNNL.
+
 The work is adapted from work sponsored by: 
 * Research sponsored by Liqun Luo's Lab
+
+## Disclaimer
+
+This material was prepared as an account of work sponsored by an agency of the United States Government.  Neither the United States Government nor the United States Department of Energy, nor Battelle, nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of these materials, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use would not infringe privately owned rights.
+Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
+PACIFIC NORTHWEST NATIONAL LABORATORY
+operated by
+BATTELLE
+for the
+UNITED STATES DEPARTMENT OF ENERGY
+under Contract DE-AC05-76RL01830
+
+## Copyright
+Simplified BSD
+____________________________________________
+Copyright 2023 Battelle Memorial Institute
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
 
