@@ -55,7 +55,7 @@ python3 train.py "_july23_test" {combination_number}
 
 
 ## Authors
-The work is adapted from code created by: 
+The work is adapted from  [Github TrailMap](https://github.com/AlbertPun/TRAILMAP), which was created by
 * **Albert Pun**
 * **Drew Friedmann**
 
