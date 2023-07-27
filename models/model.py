@@ -212,7 +212,7 @@ def get_net():
 
 
     for layer in model.layers:
-        if layer.name in ['conv3d_13', 'conv3d_14']: #,  # ['input_1', 'conv3d', 'conv3d_1', 'max_pooling3d']: #['conv3d_6', 'conv3d_7']: ##['conv3d_13', 'conv3d_14']:
+        if layer.name in ['conv3d_13', 'conv3d_14']: #,  # ['conv3d', 'conv3d_1']: #['conv3d_6', 'conv3d_7']: ##['conv3d_13', 'conv3d_14']:
             layer.trainable = True
             print(layer.name)
             print(layer.trainable)
