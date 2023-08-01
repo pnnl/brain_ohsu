@@ -13,7 +13,7 @@ pip install batchgenerators==0.25
 
 ## Inference
 
-Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. 
+Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. The performance metrics are only run on the first tif file witin a folder.
 * Add model weights path to segment_brain_batch.py at the model_weight_list variable.
 * Add the path to the data (with label and volume folders) for the image_path variable. This path can include an suffix variable. This script will use labels to calculate performance metrics for inference.
 * The boolean argument indicates if you want to use guassian inference

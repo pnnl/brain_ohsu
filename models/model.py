@@ -48,7 +48,7 @@ def create_weighted_binary_crossentropy(axon_weight, background_weight, artifact
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
-    loss = create_weighted_binary_crossentropy(1.5, .2, 0.8, 0.05)(y_true, y_pred)
+    loss = create_weighted_binary_crossentropy(1.5, 0.2, 0.8, 0.05)(y_true, y_pred)
     return loss
 
 

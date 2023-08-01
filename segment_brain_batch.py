@@ -14,6 +14,8 @@ if __name__ == "__main__":
     base_path = os.path.abspath(__file__ + "/..")
         # Load the network
     model_weight_list = [
+    
+    # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_last_layer_loss_0.0001_training__val_2_test_1__july23.hdf5",
     "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_last_layer_loss_0.0001_training__val_1_test_5__july23.hdf5",
     "/data/model-weights/trailmap_model.hdf5",
     ]
