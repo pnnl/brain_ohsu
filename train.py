@@ -18,8 +18,10 @@ if __name__ == "__main__":
     combo = [
         # no oversampling, no rotation, no learn scheduler, flip, elastic deformation percentage, rotate deformation percentage, /
         # layer settting (set in model.py), learning rate (set in model.py), model name suffix
-        (False, False, False, True, 1.0, 1.0, "last_layer", .0001, "_val_1_test_5"),
-        (False, False, False, True, 1.0, 1.0, "last_layer", .0001, "_val_2_test_1"),
+        # (True, False, True, False, 0.0, 1.0, "last_layer", .0001, "_val_2_test_1"),
+        # (True, False, True, False, 1.0, 0.0, "last_layer", .0001, "_val_2_test_1"),
+        (True, True, True, False, 1.0, 1.0, "first_layer", .0001, "_val_2_test_1"),
+        # (True, True, True, True, 1.0, 1.0, "last_layer", .0001, "_val_2_test_1"),
     ]
 
     oversample_bol, aug_bol, lr_bol, flip_bol, el_percentage, rot_percentage, encode_train, loss_start, training_data = combo[combo_number]
@@ -112,3 +114,55 @@ if __name__ == "__main__":
 
     model_name = 'model_' + now.strftime("%B-%d-%Y-%I:%M%p")
 
+
+    # def write_tiff_stack_paper(vol, fname):
+    #     # convert to number rather than decimal and to 8 so can adjust
+
+    #     im = Image.fromarray((vol[0] * 255).astype(np.uint8))
+    #     ims = []
+
+    #     for i in range(1, vol.shape[0]):
+    #         ims.append(Image.fromarray((vol[i] * 255).astype(np.uint8)))
+
+    #     im.save(fname, save_all=True, append_images=ims)
+    
+
+    # for i in range(1):
+    #     x2, y2 = next(validation_generator)
+
+    #     write_tiff_stack_paper(
+    #         x2[i, :, :, :, 0],
+    #         base_path + "/data/look/augment_spatial-input-n" + str(i) + "_test.tiff",
+    #     )
+    #     write_tiff_stack_paper(
+    #         y2[i, :, :, :, 0].astype(float),
+    #         base_path + "/data/look/augment_spatial-labeln" + str(i) + "_test.tiff",
+    #     )
+    #     write_tiff_stack_paper(
+    #         np.sum(y2[i, :, :, :, :].astype(float), -1),
+    #         base_path
+    #         + "/data/look/augment_spatial-label-all-infon"
+    #         + str(i)
+    #         + "_test.tiff",
+    #     )
+             
+        
+    # for i in range(1):
+    #     x2, y2 = next(train_generator)
+
+    #     write_tiff_stack_paper(
+    #         x2[i, :, :, :, 0],
+    #         base_path + "/data/look/augment_spatial-input-n" + str(i) + "_train.tiff",
+    #     )
+       
+    #     write_tiff_stack_paper(
+    #         y2[i, :, :, :, 0].astype(float),
+    #         base_path + "/data/look/augment_spatial-labeln" + str(i) + "_train.tiff",
+    #     )
+    #     write_tiff_stack_paper(
+    #         np.sum(y2[i, :, :, :, :].astype(float), -1),
+    #         base_path
+    #         + "/data/look/augment_spatial-label-all-infon"
+    #         + str(i)
+    #         + "_train.tiff",
+    #     )

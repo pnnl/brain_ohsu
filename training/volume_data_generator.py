@@ -388,7 +388,6 @@ class VolumeDataGenerator(Sequence):
                     # flip
                     x2 = self._transform_vol(x2)
                     y2 = self._transform_vol(y2)
-                    # wait to crop until after augmentation, instead of during loading
                     y2 = np.copy(crop_numpy(offset, offset, offset, y2))
                     x_gen[counter] = x2
                     y_gen[counter] = y2

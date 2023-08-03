@@ -69,8 +69,10 @@ def get_dir(path):
     return sorted(tiffs)
 
 dim_offset = 14
-file_name2 = "seg-_overlap_2.0_trailmap_model.hdf5_guass_False_testing-original_val_5_test_1"
-file_name = "normal_test_1" #"seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
+file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
+# file_name = "normal_test_1" 
+# file_name = "gauss_test_1"
+file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_True_testing-original_test_1" 
 slice_num = 74
 # pred starts at dim_offset in
 pred_num = slice_num + dim_offset
@@ -118,11 +120,16 @@ imgray_pred[fn_locs[0], fn_locs[1], :] = (255, 102, 0) # orange false negative
 fp_locs = np.where((pred_image_array >= 0.5) & (truth_array != 2))
 print("false pos")
 print(len(fp_locs[0]))
+
+print("recall")
+print(len(tp_locs[0])/(len(tp_locs[0]) + len(fn_locs[0]) ))
+print("precision")
+print(len(tp_locs[0])/(len(tp_locs[0]) + len(fp_locs[0])))
 # false positive
 imgray_pred[fp_locs[0], fp_locs[1], :] = (255, 0, 0)  # red false positive
 
 edge_locs = np.where(truth_array == 4)
-imgray_pred[edge_locs[0], edge_locs[1], :] = (255,255,255)  # red false positive
+imgray_pred[edge_locs[0], edge_locs[1], :] = (255,255,255)  # white edges
 
 
 im = Image.fromarray(imgray_pred.astype(np.uint8))
