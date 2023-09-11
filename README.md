@@ -16,7 +16,7 @@ pip install batchgenerators==0.25
 Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. The performance metrics are only run on the first tif file witin a folder.
 * Add model weights path to segment_brain_batch.py at the model_weight_list variable.
 * Add the path to the data (with label and volume folders) for the image_path variable. This path can include an suffix variable. This script will use labels to calculate performance metrics for inference.
-* The boolean argument indicates if you want to use guassian inference
+* The boolean argument indicates if you want to use gaussian inference
 * The string argument indicates training/validation/test data division suffix (leave '' if not using suffix)
 * Use the combination number of the desired model_weight and image_path combination as an argument for segment_brain_batch.py.
 
@@ -47,7 +47,7 @@ For training:
 * The first string indicates the model name suffix. 
 * The combination_number argument indicates the index of the combination of arguments set by variable combo under train.py
 * The location of the training data is set directly with the train.py file  (training_path and validation_path) 
-* The positive booleans under the argument list under variable combo indicate 1) no oversampling, 2) no rotation, 3) no learn scheduler, 4) flip, 5) elastic deformation percentage, 6) rotate deformation percentage, 7) layer settting (needs to be set in model.py), 8) learning rate (needs to be set in model.py), and 9) training/validation/test data division suffix (leave '' if not using suffix)
+* The positive booleans under the argument list under variable combo indicate 1) no oversampling, 2) no rotation, 3) no learn scheduler, and 4) flipping on all three dimensions, and the additional values indicate 5) elastic deformation percentage, 6) rotate deformation percentage, 7) layer settting (needs to be set in model.py), 8) learning rate (needs to be set in model.py), and 9) training/validation/test data division suffix (leave '' if not using suffix)
 
 ```
 python3 train.py "_july23_test" {combination_number}
@@ -55,13 +55,11 @@ python3 train.py "_july23_test" {combination_number}
 
 
 ## Authors
-The work is adapted from  [Github TrailMap](https://github.com/AlbertPun/TRAILMAP), which was created by
-* **Albert Pun**
-* **Drew Friedmann**
 
-The modified code was used in a paper by:
+The modified code was created for a paper by:
 Marjolein Oostrom, Michael A. Muniak, Rogene Eichler West, Sarah Akers, Paritosh Pande, Moses Obiri, Wei Wang, Kasey Bowyer, Zhuhao Wu, Lisa Bramer, Tianyi Mao*, Bobbie Jo Webb-Robertson*
 
+The work is adapted from  [Github TrailMap](https://github.com/AlbertPun/TRAILMAP), which was created by Albert Pun and Drew Friedmann
 
 ## Acknowledgments
 
