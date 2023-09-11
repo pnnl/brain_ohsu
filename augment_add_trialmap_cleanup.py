@@ -64,7 +64,7 @@ def crop_numpy(dim1, dim2, dim3, vol):
         ]
 
 
-def write_tif_stack(vol, fname):
+def write_tiff_stack(vol, fname):
     # convert to number rather than decimal and to 8 so can adjust
     im = Image.fromarray(vol[0])
     ims = []
@@ -87,8 +87,8 @@ def write_tiff_stack_paper(vol, fname):
 
 
 def get_dir(path):
-    tifs = [join(path, f) for f in listdir(path) if f[0] != "."]
-    return sorted(tifs)
+    tiffs = [join(path, f) for f in listdir(path) if f[0] != "."]
+    return sorted(tiffs)
 
 
 def crop_cube(x, y, z, vol, cube_length=64):
@@ -145,7 +145,7 @@ def read_folder_stack(path):
     return vol
 
 
-def write_folder_stack_paper(vol, path):
+def write_folder_stack(vol, path):
     if os.path.exists(path):
         print("Overwriting " + path)
         shutil.rmtree(path)
@@ -153,11 +153,11 @@ def write_folder_stack_paper(vol, path):
     makedirs(path)
 
     for i in range(vol.shape[0]):
-        fname = os.path.join(path, "slice" + str(i).zfill(5) + ".tif")
+        fname = os.path.join(path, "slice" + str(i).zfill(5) + ".tiff")
         cv2.imwrite(fname, vol[i])
 
 
-def read_tif_stack(path):
+def read_tiff_stack(path):
     img = Image.open(path)
     images = []
     for i in range(img.n_frames):
@@ -274,8 +274,8 @@ def generate_data_set(data_original_path, data_set_path, nb_examples=10):
     labels = []
     # Read in the chunks from training-original
     for i in range(len(volumes_path)):
-        volumes.append(read_tif_stack(volumes_path[i]))
-        labels.append(read_tif_stack(labels_path[i]))
+        volumes.append(read_tiff_stack(volumes_path[i]))
+        labels.append(read_tiff_stack(labels_path[i]))
 
     if nb_examples is None:
         nb_examples = 100 * len(volumes_path)
@@ -289,20 +289,20 @@ def generate_data_set(data_original_path, data_set_path, nb_examples=10):
         # adding in to test
         # removing everything with  makes the scaling spread out into negatives
         # volume_chunk[:, :, :] = 0.0
-        volume_chunk[:, 50:52, 50:52] = 4000
+        volume_chunk[:, 50:52, 50:52] = 65535
         # label_chunk[:, :, :] = 0
         label_chunk[:, 50:52, 50:52] = 2
-        write_tif_stack(
-            volume_chunk, data_set_path + "/volumes/volume-" + str(i) + ".tif"
+        write_tiff_stack(
+            volume_chunk, data_set_path + "/volumes/volume-" + str(i) + ".tiff"
         )
-        write_tif_stack(
-            label_chunk, data_set_path + "/labels/label-" + str(i) + ".tif"
+        write_tiff_stack(
+            label_chunk, data_set_path + "/labels/label-" + str(i) + ".tiff"
         )
 
 
 data_original_path = "data/training/training-original"
 data_set_path = "data/training/training-set"
-##data_original_path = "orig2tif_1"
+##data_original_path = "orig2tiff_1"
 nb_examples = None
 generate_data_set(data_original_path, data_set_path, nb_examples=nb_examples)
 
@@ -332,8 +332,8 @@ def load_data(data_path, nb_examples=10):
 
     for i in range(nb_examples):
         rand_ind = inds[i]
-        x.append(read_tif_stack(volumes_path[rand_ind]))
-        y.append(read_tif_stack(labels_path[rand_ind]))
+        x.append(read_tiff_stack(volumes_path[rand_ind]))
+        y.append(read_tiff_stack(labels_path[rand_ind]))
 
     inds = list(range(nb_examples))
     random.shuffle(inds)
@@ -823,19 +823,25 @@ class VolumeDataGenerator(Sequence):
                     data_set_path + "/look/orig-label-all-infon" + str(i) + ".tiff",
                 )
                 print("min x")
+                print(x_copy)
                 print(x_copy.min())
                 print(x_copy.max())
+                print(type(x_copy))
                 x2, y2 = augment_spatial(
                     x_copy, y_copy, patch_size=preprocess_vol.squeeze().shape
                 )
                 print("augmnet")
+                print(x2)
                 print(x2.min())
                 print(x2.max())
+                print(type(x2))
                 x2 = self._preprocess_vol(x2)
                 print("final")
+                print(x2)
                 print(x2.min())
                 print(x2.max())
-                print("preprcoess")
+                print("no aug")
+                print(preprocess_vol)
                 print(preprocess_vol.min())
                 print(preprocess_vol.max())
                 write_tiff_stack_paper(
@@ -853,7 +859,7 @@ class VolumeDataGenerator(Sequence):
                     + str(i)
                     + ".tiff",
                 )
-            #k eep offset zero until after spatial transformation
+                # keep offset zero until after spatial transformation
 
                 y2 = np.copy(crop_numpy(offset, offset, offset, y2))
 
@@ -863,7 +869,7 @@ class VolumeDataGenerator(Sequence):
             print("")
             yield x_gen, y_gen
 
-# change to training
+
 x_training, y_training = load_data(training_path)
 
 print("Loaded Data")

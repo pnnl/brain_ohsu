@@ -69,10 +69,10 @@ def get_dir(path):
     return sorted(tiffs)
 
 dim_offset = 14
-file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
+file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_True_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
 # file_name = "normal_test_1" 
 # file_name = "gauss_test_1"
-file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_True_testing-original_test_1" 
+#file_name = "seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_last_layer_loss_0.0001_training__val_2_test_1__july23.hdf5_gauss_True_testing-original_test_1" 
 slice_num = 74
 # pred starts at dim_offset in
 pred_num = slice_num + dim_offset
