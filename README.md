@@ -56,7 +56,7 @@ For training:
 * The first string indicates the model name suffix. 
 * The combination_number argument indicates the index of the combination of arguments set by variable combo under train.py
 * The location of the training data is set directly with the train.py file  (training_path and validation_path) 
-* The positive booleans under the argument list under variable combo indicate 1) no oversampling, 2) no rotation, 3) no learn scheduler, and 4) flipping on all three dimensions, and the additional values indicate 5) elastic deformation percentage, 6) rotate deformation percentage, 7) layer settting (needs to be set in model.py), 8) learning rate (needs to be set in model.py), and 9) training/validation/test data division suffix (leave '' if not using suffix)
+* The positive booleans under the argument list under variable combo indicate 1) no oversampling, 2) no rotation, 3) no learn scheduler, and 4) flipping on all three dimensions, and the additional values indicate 5) elastic deformation percentage, 6) rotate deformation percentage, 7) layer settting (needs to be set in model.py), 8) learning rate (needs to be set in model.py), and 9) training/validation/test data division suffix (leave '' if not using suffix). The best model referenced in the paper is named "best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_last_layer_loss_0.0001_training__val_2_test_1__july23.hdf5"
 
 ```
 python3 train.py "_july23_test" {combination_number}
