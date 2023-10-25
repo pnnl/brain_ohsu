@@ -3,6 +3,10 @@
 
 This is a modification of the code described in  [Mapping Mesoscale Axonal Projections in the Mouse Brain Using A 3D Convolutional Network](https://www.biorxiv.org/content/10.1101/812644v1.full) Friedmann D, Pun A, et al and located at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP). The original TrailMap licence is located [here](https://github.com/dfriedma/TRAILMAP/blob/master/LICENSE) and the licence for nnUNet and batchgenerators are [here](https://github.com/MIC-DKFZ/nnUNet/blob/master/LICENSE) and [here](https://github.com/MIC-DKFZ/batchgenerators/blob/master/LICENSE), respectively. The copies of the licences are also included in this repository. Files have been modified.
 
+TrailMap copyright notice:
+
+Copyright (c) 2019 AlbertPun
+
 Batchgenerators copyright notice:
 
  Copyright [2021] [Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
