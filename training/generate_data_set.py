@@ -13,25 +13,41 @@ def do_not_do_oversample():
     return np.random.uniform() > oversample_foreground_percent
 
 
-def get_random_training(volume, label,  normal):
+def get_random_training(volume, label,  normal, training_example):
     # Get a random corner to cut out a chunk for the training-set
     print('normal')
     print(do_not_do_oversample() or normal == True)
+    print('training example ' + str(training_example))
+    val_amount = max(input_dim, volume.shape[0]//4)
     # https://github.com/MIC-DKFZ/nnUNet/blob/6d02b5a4e2a7eae14361cde9599bbf4ccde2cd37/nnunet/training/dataloading/dataset_loading.py#L294
     if do_not_do_oversample() or normal == True:
         # because the x y images are appended in list, the first order is z and the order in shape is z, x, y not x, y, z
-        z = random.randint(0, volume.shape[0] - input_dim)
+        if training_example:
+            z = random.randint(0, volume.shape[0] - input_dim - val_amount)
+        else:
+            z = random.randint(volume.shape[0] - val_amount, volume.shape[0] - input_dim)
         x = random.randint(0, volume.shape[1] - input_dim)
         y = random.randint(0, volume.shape[2] - input_dim)
     else:
-        voxels_of_that_class = np.argwhere(
-            label[
-                : label.shape[0] - input_dim,
-                : label.shape[1] - input_dim,
-                : label.shape[2] - input_dim,
-            ]
-            == 2
-        )
+        if training_example: 
+            voxels_of_that_class = np.argwhere(
+                label[
+                    : label.shape[0] - input_dim - val_amount,
+                    : label.shape[1] - input_dim,
+                    : label.shape[2] - input_dim,
+                ]
+                == 2
+            )
+        else: 
+            voxels_of_that_class = np.argwhere(
+                label[
+                    label.shape[0] - val_amount: label.shape[0] - input_dim,
+                    : label.shape[1] - input_dim,
+                    : label.shape[2] - input_dim,
+                ]
+                == 2
+            )
+
 
         if len(voxels_of_that_class) > 0:
             selected_voxel = voxels_of_that_class[
@@ -44,17 +60,23 @@ def get_random_training(volume, label,  normal):
         else:
             # If the image does not contain any foreground classes, we fall back to random cropping
 
-            z = random.randint(0, volume.shape[0] - input_dim)
+            if training_example:
+                z = random.randint(0, volume.shape[0] - input_dim - val_amount)
+            else:
+                z = random.randint(volume.shape[0] - val_amount, volume.shape[0] - input_dim)
             x = random.randint(0, volume.shape[1] - input_dim)
             y = random.randint(0, volume.shape[2] - input_dim)
-
+    print("z")
+    print(z)
+    print("x, y")
+    print(x, y)
     volume_chunk = crop_cube(x, y, z, volume, input_dim)
     label_chunk = crop_cube(x, y, z, label, input_dim)
 
     return volume_chunk, label_chunk
 
 
-def generate_data_set(data_original_path, data_set_path, normal=True, nb_examples=None):
+def generate_data_set(data_original_path, data_set_path, training_example, normal=True, nb_examples=None):
     # Get the directory for volumes and labels sorted
     volumes_path = sorted(get_dir(data_original_path + "/volumes"))
     labels_path = sorted(get_dir(data_original_path + "/labels"))
@@ -85,15 +107,13 @@ def generate_data_set(data_original_path, data_set_path, normal=True, nb_example
         labels.append(read_tiff_stack(labels_path[i], dim_offset = dim_offset))
 
 
-    if nb_examples is None:
-        # change to 100 if not double
-        nb_examples = 100 * len(volumes_path)
+    nb_examples = nb_examples * len(volumes_path)
 
     draw_progress_bar(0)
     for i in range(nb_examples):
         ind = i % len(volumes_path)
         volume_chunk, label_chunk = get_random_training(
-            volumes[ind], labels[ind],  normal=normal
+            volumes[ind], labels[ind],  normal=normal, training_example = training_example
         )
 
         write_tiff_stack(

@@ -3,52 +3,49 @@ from training.label_processor import process_labels
 from utilities.utilities import *
 
 if __name__ == "__main__":
-    normal = sys.argv[3] == "True"
+    data_create = sys.argv[1]
     add_suffix = sys.argv[2] 
+    normal = sys.argv[3] == "True"
+
+    nb_examples = None
+    if len(sys.argv) > 4:
+        nb_examples = int(sys.argv[4])
+
+    
     base_path = os.path.abspath(__file__ + "/..")
-    print(sys.argv[1])
-    print(sys.argv[2])
-    print(sys.argv[3])
+    print(data_create, add_suffix, normal, nb_examples)
     # Must include operation being done.
     # e.g. generate_data_set
     if len(sys.argv) < 2:
         raise Exception("You must include the type of preparation. Please refer to readme")
 
     # Generate data set by cropping out 64 length cubes from larger chunks for validation
-    if sys.argv[1] == "generate_validation_set":
+    if data_create == "generate_validation_set":
 
         # Validation directories
-        data_original_path = base_path + f"/data/validation/validation-original{add_suffix}"
+        data_original_path = base_path + f"/data/training/training-original{add_suffix}"
         # change path here to 100 if not double
         data_set_path = base_path + f"/data/validation/validation-set_normal_{normal}{add_suffix}"
 
         # Default value is None
-        nb_examples = None
-        if len(sys.argv) > 4:
-            nb_examples = int(sys.argv[4])
-
+        
         print(data_original_path, data_set_path, normal, nb_examples)
-        generate_data_set(data_original_path, data_set_path, normal = normal, nb_examples=nb_examples)
+        generate_data_set(data_original_path, data_set_path, training_example = False, normal = normal, nb_examples=nb_examples)
 
     # Generate data set by cropping out 64 length cubes from larger chunks for training
-    elif sys.argv[1] == "generate_training_set":
+    elif data_create == "generate_training_set":
 
         # Training directories
         data_original_path = base_path + f"/data/training/training-original{add_suffix}"
          # change path here to 100 if not double
         data_set_path = base_path + f"/data/training/training-set_normal_{normal}{add_suffix}"
-
-        # Default value is None
-        nb_examples = None
-        if len(sys.argv) > 4:
-            nb_examples = int(sys.argv[4])
             
         print(data_original_path, data_set_path, normal, nb_examples)
-        generate_data_set(data_original_path, data_set_path, normal = normal,  nb_examples=nb_examples)
+        generate_data_set(data_original_path, data_set_path, training_example = True, normal = normal,  nb_examples=nb_examples)
 
 
     # Add edge labels to your labeled data
-    elif sys.argv[1] == "process_labels":
+    elif data_create == "process_labels":
 
         if len(sys.argv) < 3:
             raise Exception("You must include the directory to the labels")

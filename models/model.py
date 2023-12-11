@@ -48,7 +48,7 @@ def create_weighted_binary_crossentropy(axon_weight, background_weight, artifact
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
-    loss = create_weighted_binary_crossentropy(1.5, .2, 0.8, 0.05)(y_true, y_pred)
+    loss = create_weighted_binary_crossentropy(1.5, 0.5, 0.8, 0.05)(y_true, y_pred)
     return loss
 
 
@@ -152,7 +152,7 @@ def edge_f1_score(y_true, y_pred):
 
 
 
-def get_net():
+def get_net(encode_layer="full_layer", start_loss=0.001):
     # Level 1
     input = Input((input_dim, input_dim, input_dim, 1))
     conv1 = Conv3D(32, (3, 3, 3), activation="relu", padding="same")(input)
@@ -208,19 +208,22 @@ def get_net():
     preds = Conv3D(1, (1, 1, 1), activation="sigmoid")(batch7)
     model = Model(inputs=input, outputs=preds)
 
-    # rlrop = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=100)
 
-
-    for layer in model.layers:
-        if layer.name in  ['conv3d_13', 'conv3d_14']: #,  # ['input_1',  'max_pooling3d']: #['conv3d_6', 'conv3d_7']: ##['conv3d_13', 'conv3d_14']:
-            layer.trainable = True
-            print(layer.name)
-            print(layer.trainable)
-        else:
-            layer.trainable = False
-
-    
-    model.compile(optimizer=Adam(lr=0.0001), loss=weighted_binary_crossentropy,
+    if encode_layer == "full_layer":
+        pass
+    else:
+        for layer in model.layers:
+            if layer.name in  [['conv3d', 'conv3d_1'], ['conv3d_6', 'conv3d_7'], ['conv3d_13', 'conv3d_14']][int(encode_layer)]:
+                layer.trainable = True
+                print(layer.name)
+                print(layer.trainable)
+            else:
+                layer.trainable = False
+    print("loss used")
+    print(float(start_loss))
+    print("encode")
+    print(encode_layer)
+    model.compile(optimizer=Adam(lr=float(start_loss)), loss=weighted_binary_crossentropy,
                   metrics=[axon_precision, axon_recall, f1_score, artifact_precision, edge_axon_precision, adjusted_accuracy, edge_f1_score], run_eagerly=True)
 
     return model

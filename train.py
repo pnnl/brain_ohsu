@@ -13,15 +13,102 @@ if __name__ == "__main__":
     combo_number = int(sys.argv[-1])
     name_model = sys.argv[1]
     batch_size = 6
-    epochs = 100
+    epochs = 50
     print(name_model)
     combo = [
         # no oversampling, no rotation, no learn scheduler, flip, elastic deformation percentage, rotate deformation percentage, /
         # layer settting (set in model.py), learning rate (set in model.py), model name suffix
-        # (True, False, True, False, 0.0, 1.0, "last_layer", .0001, "_val_2_test_1"),
-        # (True, False, True, False, 1.0, 0.0, "last_layer", .0001, "_val_2_test_1"),
-        (True, True, True, False, 1.0, 1.0, "first_layer", .0001, "_val_2_test_1"),
-        # (True, True, True, True, 1.0, 1.0, "last_layer", .0001, "_val_2_test_1"),
+        (False, True, True, False, 1.0, 1.0, "full_layer", .0005, "_test_1"),
+        (False, True, True, False, 1.0, 1.0, "full_layer", .0005, "_test_2"),
+        (False, True, True, False, 1.0, 1.0, "full_layer", .0005, "_test_3"),
+        (False, True, True, False, 1.0, 1.0, "full_layer", .0005, "_test_4"),
+        (False, True, True, False, 1.0, 1.0, "full_layer", .0005, "_test_5"),
+        (False, True, True, False, 1.0, 1.0, "full_layer", .0005, "_test_6"),
+        (True, False, True, False, 1.0, 1.0, "full_layer", .0005, "_test_1"),
+        (True, False, True, False, 1.0, 1.0, "full_layer", .0005, "_test_2"),
+        (True, False, True, False, 1.0, 1.0, "full_layer", .0005, "_test_3"),
+        (True, False, True, False, 1.0, 1.0, "full_layer", .0005, "_test_4"),
+        (True, False, True, False, 1.0, 1.0, "full_layer", .0005, "_test_5"),
+        (True, False, True, False, 1.0, 1.0, "full_layer", .0005, "_test_6"),
+        (True, False, True, False, 1.0, 0.0, "full_layer", .0005, "_test_1"),
+        (True, False, True, False, 1.0, 0.0, "full_layer", .0005, "_test_2"),
+        (True, False, True, False, 1.0, 0.0, "full_layer", .0005, "_test_3"),
+        (True, False, True, False, 1.0, 0.0, "full_layer", .0005, "_test_4"),
+        (True, False, True, False, 1.0, 0.0, "full_layer", .0005, "_test_5"),
+        (True, False, True, False, 1.0, 0.0, "full_layer", .0005, "_test_6"),
+        (True, False, True, False, 0.0, 1.0, "full_layer", .0005, "_test_1"),
+        (True, False, True, False, 0.0, 1.0, "full_layer", .0005, "_test_2"),
+        (True, False, True, False, 0.0, 1.0, "full_layer", .0005, "_test_3"),
+        (True, False, True, False, 0.0, 1.0, "full_layer", .0005, "_test_4"),
+        (True, False, True, False, 0.0, 1.0, "full_layer", .0005, "_test_5"),
+        (True, False, True, False, 0.0, 1.0, "full_layer", .0005, "_test_6"),
+        (True, True, False, False, 1.0, 1.0, "full_layer", .0005, "_test_1"),
+        (True, True, False, False, 1.0, 1.0, "full_layer", .0005, "_test_2"),
+        (True, True, False, False, 1.0, 1.0, "full_layer", .0005, "_test_3"),
+        (True, True, False, False, 1.0, 1.0, "full_layer", .0005, "_test_4"),
+        (True, True, False, False, 1.0, 1.0, "full_layer", .0005, "_test_5"),
+        (True, True, False, False, 1.0, 1.0, "full_layer", .0005, "_test_6"),
+        (True, True, True, True, 1.0, 1.0, "full_layer", .0005, "_test_1"),
+        (True, True, True, True, 1.0, 1.0, "full_layer", .0005, "_test_2"),
+        (True, True, True, True, 1.0, 1.0, "full_layer", .0005, "_test_3"),
+        (True, True, True, True, 1.0, 1.0, "full_layer", .0005, "_test_4"),
+        (True, True, True, True, 1.0, 1.0, "full_layer", .0005, "_test_5"),
+        (True, True, True, True, 1.0, 1.0, "full_layer", .0005, "_test_6"),
+
+        # (True, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_1"),
+        # (True, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_2"),
+        # (True, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_3"),
+        # (True, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_4"),
+        # (True, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_5"),
+        # (True, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_6"),
+        # (True, False, True, False, 0.5, 0.5, "full_layer", .001, "_test_1"),
+        # (True, False, True, False, 0.5, 0.5, "full_layer", .001, "_test_2"),
+        # (True, False, True, False, 0.5, 0.5, "full_layer", .001, "_test_3"),
+        # (True, False, True, False, 0.5, 0.5, "full_layer", .001, "_test_4"),
+        # (True, False, True, False, 0.5, 0.5, "full_layer", .001, "_test_5"),
+        # (True, False, True, False, 0.5, 0.5, "full_layer", .001, "_test_6"),
+        # (True, False, True, False, 0.5, 0.0, "full_layer", .001, "_test_1"),
+        # (True, False, True, False, 0.5, 0.0, "full_layer", .001, "_test_2"),
+        # (True, False, True, False, 0.5, 0.0, "full_layer", .001, "_test_3"),
+        # (True, False, True, False, 0.5, 0.0, "full_layer", .001, "_test_4"),
+        # (True, False, True, False, 0.5, 0.0, "full_layer", .001, "_test_5"),
+        # (True, False, True, False, 0.5, 0.0, "full_layer", .001, "_test_6"),
+        # (True, False, True, False, 0.0, 0.5, "full_layer", .001, "_test_1"),
+        # (True, False, True, False, 0.0, 0.5, "full_layer", .001, "_test_2"),
+        # (True, False, True, False, 0.0, 0.5, "full_layer", .001, "_test_3"),
+        # (True, False, True, False, 0.0, 0.5, "full_layer", .001, "_test_4"),
+        # (True, False, True, False, 0.0, 0.5, "full_layer", .001, "_test_5"),
+        # (True, False, True, False, 0.0, 0.5, "full_layer", .001, "_test_6"),
+        # (False, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_1"),
+        # (False, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_2"),
+        # (False, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_3"),
+        # (False, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_4"),
+        # (False, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_5"),
+        # (False, True, True, False, 1.0, 1.0, "full_layer", .001, "_test_6"),
+        # (True, False, True, False, 1.0, 0.0, "full_layer", .001, "_test_1"),
+        # (True, False, True, False, 1.0, 0.0, "full_layer", .001, "_test_2"),
+        # (True, False, True, False, 1.0, 0.0, "full_layer", .001, "_test_3"),
+        # (True, False, True, False, 1.0, 0.0, "full_layer", .001, "_test_4"),
+        # (True, False, True, False, 1.0, 0.0, "full_layer", .001, "_test_5"),
+        # (True, False, True, False, 1.0, 0.0, "full_layer", .001, "_test_6"),
+        # (True, False, True, False, 0.0, 1.0, "full_layer", .001, "_test_1"),
+        # (True, False, True, False, 0.0, 1.0, "full_layer", .001, "_test_2"),
+        # (True, False, True, False, 0.0, 1.0, "full_layer", .001, "_test_3"),
+        # (True, False, True, False, 0.0, 1.0, "full_layer", .001, "_test_4"),
+        # (True, False, True, False, 0.0, 1.0, "full_layer", .001, "_test_5"),
+        # (True, False, True, False, 0.0, 1.0, "full_layer", .001, "_test_6"),
+        # (True, True, False, False, 1.0, 1.0, "full_layer", .001, "_test_1"),
+        # (True, True, False, False, 1.0, 1.0, "full_layer", .001, "_test_2"),
+        # (True, True, False, False, 1.0, 1.0, "full_layer", .001, "_test_3"),
+        # (True, True, False, False, 1.0, 1.0, "full_layer", .001, "_test_4"),
+        # (True, True, False, False, 1.0, 1.0, "full_layer", .001, "_test_5"),
+        # (True, True, False, False, 1.0, 1.0, "full_layer", .001, "_test_6"),
+        # (True, True, False, False, 1.0, 1.0, "full_layer", .001, "_test_1"),
+        # (True, True, True, True, 1.0, 1.0, "full_layer", .001, "_test_2"),
+        # (True, True, True, True, 1.0, 1.0, "full_layer", .001, "_test_3"),
+        # (True, True, True, True, 1.0, 1.0, "full_layer", .001, "_test_4"),
+        # (True, True, True, True, 1.0, 1.0, "full_layer", .001, "_test_5"),
+        # (True, True, True, True, 1.0, 1.0, "full_layer", .001, "_test_6"),
     ]
 
     oversample_bol, aug_bol, lr_bol, flip_bol, el_percentage, rot_percentage, encode_train, loss_start, training_data = combo[combo_number]
@@ -31,6 +118,7 @@ if __name__ == "__main__":
     training_path = base_path + f"/data/training/training-set_normal_{oversample_bol}{training_data}"
     validation_path = base_path + f"/data/validation/validation-set_normal_True{training_data}"
 
+    print("training and validation path")
     print(training_path)
     print(validation_path)
     
@@ -71,17 +159,17 @@ if __name__ == "__main__":
 
     tboard = TensorBoard(log_dir=logdir, histogram_freq=0, write_graph=True, write_images=False)
 
-    current_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/latest_model_{epochs:03d}_{name_model}.hdf5', verbose=1)
-    period_checkpoint = ModelCheckpoint(base_path + f'/data/model-weights/weights_{epochs:03d}_{name_model}.hdf5', period=20)
+    current_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/latest_model_{epochs:03d}_{name_model}.hdf5', verbose=1, save_weights_only=True)
+    period_checkpoint = ModelCheckpoint(base_path + f'/data/model-weights/weights_{epochs:03d}_{name_model}.hdf5', period=50)
     best_weight_checkpoint = ModelCheckpoint(filepath=base_path + f'/data/model-weights/best_weights_checkpoint_{name_model}.hdf5',
-                                             verbose=1, save_best_only=True)
+                                             verbose=1, save_best_only=True, save_weights_only=True)
 
     
 
     weights_path = base_path + "/data/model-weights/trailmap_model.hdf5"
     print(weights_path)
 
-    model = get_net()
+    model = get_net(encode_train, loss_start)
     # This will do transfer learning and start the model off with our current best model.
     # Remove the model.load_weight line below if you want to train from scratch
     model.load_weights(weights_path)
@@ -90,10 +178,10 @@ if __name__ == "__main__":
         # use more steps in the epochs
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
         model.fit_generator(train_generator,
-                            steps_per_epoch=700//batch_size,
+                            steps_per_epoch=(8*75)//batch_size,
                             epochs=epochs,
                             validation_data=validation_generator,
-                            validation_steps=100//batch_size,
+                            validation_steps=(8*25)//batch_size,
                             use_multiprocessing=False,
                             workers=1,
                             callbacks=[lr_scheduler, tboard, period_checkpoint, best_weight_checkpoint],
@@ -103,10 +191,10 @@ if __name__ == "__main__":
 
         #https://stackoverflow.com/questions/39779710/setting-up-a-learningratescheduler-in-keras
         model.fit_generator(train_generator,
-                            steps_per_epoch=700//batch_size,
+                            steps_per_epoch=(8*75)//batch_size,
                             epochs=epochs,
                             validation_data=validation_generator,
-                            validation_steps=100//batch_size,
+                            validation_steps=(8*25)//batch_size,
                             use_multiprocessing=False,
                             workers=1,
                             callbacks=[tboard, period_checkpoint, best_weight_checkpoint],
