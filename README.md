@@ -45,13 +45,15 @@ Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun
 For preparing data:
 * When preparing the data for training, the location of the  data is set directly with the prepare_data.py file at data_original_path (input) and data_set_path (output) for each of the functions.
 * The data_set_path should match the name provided as the training data under train.py (training_path and validation_path).
-* The number of examples should be set directly within prepare_data with the nb_examples variable.
 * The second string argument indicates training/validation/test data division suffix (leave '' if not using suffix). 
 * The boolean argument indicates if the training should oversample 
+* The last number indicated the number of samples per cube
+* The test data is created from the first 3/5 of the cube, and validation data is created from the last 1/4 of the cube
+* If 1/4 of the cube is less than the input dim, the validation data uses the last input_dim pixels of the cube
 
 ```
-python3 prepare_data.py "generate_validation_set" "_val_2_test_1" True
-python3 prepare_data.py "generate_training_set"  "_val_2_test_1" True
+python3 prepare_data.py "generate_validation_set" "_test_6" False 25
+python3 prepare_data.py "generate_training_set" "_test_6" False 75
 
 ```
 
@@ -60,7 +62,7 @@ For training:
 * The first string indicates the model name suffix. 
 * The combination_number argument indicates the index of the combination of arguments set by variable combo under train.py
 * The location of the training data is set directly with the train.py file  (training_path and validation_path) 
-* The positive booleans under the argument list under variable combo indicate 1) no oversampling, 2) no rotation, 3) no learn scheduler, and 4) flipping on all three dimensions, and the additional values indicate 5) elastic deformation percentage, 6) rotate deformation percentage, 7) layer settting (needs to be set in model.py), 8) learning rate (needs to be set in model.py), and 9) training/validation/test data division suffix (leave '' if not using suffix). The best model referenced in the paper is named "best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_last_layer_loss_0.0001_training__val_2_test_1__july23.hdf5"
+* The positive booleans under the argument list under variable combo indicate 1) no oversampling, 2) no rotation, 3) no learn scheduler, and 4) flipping on all three dimensions, and the additional values indicate 5) elastic deformation percentage, 6) rotate deformation percentage, 7) layer settting, 8) learning rate , and 9) training/validation/test data division suffix (leave '' if not using suffix). 
 
 ```
 python3 train.py "_july23_test" {combination_number}
