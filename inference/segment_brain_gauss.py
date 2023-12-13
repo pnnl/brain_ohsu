@@ -10,6 +10,8 @@ from scipy.ndimage.filters import gaussian_filter
 from utilities.utilities import *
 import tensorflow as tf
 import csv
+import json
+import re
 
 # Will need to be adjusted depending on the GPU
 batch_size = 15
@@ -93,10 +95,14 @@ def read_folder_section(path, start_index, end_index):
     return vol
 
 
-def loss_inference(input_folder, output_folder):
+def loss_inference(input_folder, output_folder, validation_data = False):
     file_names = get_dir(os.path.join(input_folder, "labels"))
     # only works for one tif stack
     y_true_flat = read_tiff_stack(file_names[0])
+
+
+    if validation_data:
+        y_true_flat = y_true_flat[-output_dim:,: ,: ]
 
     background = np.copy(y_true_flat)
     background[background == 2] = 0
@@ -204,7 +210,7 @@ a batch of chunks. To conserve memory, the function ill load sections of the bra
 
 
 def segment_brain_gauss(
-    input_folder, output_folder, model, overlap_var, name, tif_input=True
+    input_folder, output_folder, model, overlap_var, name, tif_input=True, validation_data = False
 ):
     gaussian_importance_map = get_gaussian(
         (output_dim, output_dim, output_dim), sigma_scale=1.0 / 8
@@ -333,17 +339,61 @@ def segment_brain_gauss(
     write_folder_section(output_folder, file_names, output_total)
     # pd.DataFrame(ones_total.reshape(-1,  ones_total.shape[-1])).to_csv('values_'+ str(overlap_var) + '.csv')
     # if labels exist, get the accuracy
+    def lookup(s, lookups):
+        for key, value in lookups.items():
+            # if key matches regex
+            re_match_object = re.search(r'{}'.format(key), s)
+            if re_match_object:
+                #sub in suffix name
+                return value + re_match_object.groups()[0]
+        return None
     if tif_input == True:
         print(output_folder)
         print(input_folder)
         output_dict = loss_inference(input_folder, output_folder)
+        with open('inference/dict_model_gauss.json') as json_file:
+            dict_model = json.load(json_file)
+
+        def lookup(s, lookups):
+            print("lookup")
+            print(s)
+            for key, value in lookups.items():
+                print(key, value)
+                # if key matches regex
+                re_match_object = re.search(r'{}'.format(key), s)
+                if re_match_object:
+                    print("matched!")
+                    print(key, value)
+                    #sub in suffix name
+                    return value + re_match_object.groups()[0] + re_match_object.groups()[1]
+            return s
+
+
+        new_values = list(output_dict.values())
+        new_values.append(lookup(os.path.basename(output_folder), dict_model))
+        new_values.append("guass")
+        new_keys = list(output_dict.keys())
+        new_keys.append("model")
+        new_keys.append("gauss")
+        if validation_data:
+            with open("inference/segment_total_results_validation_gauss.csv", "a") as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(new_keys)
+                writer.writerow(new_values)
+        else:
+            with open("inference/segment_total_results_gauss.csv", "a") as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(new_keys)
+                writer.writerow(new_values)
 
         with open(output_folder + "/" + f"dict{name}.csv", "w") as csv_file:
             writer = csv.writer(csv_file)
             for key, value in output_dict.items():
                 writer.writerow([key, value])
+
             for key, value in output_dict.items():
                 writer.writerow([value])
+                
     total_time = "Total: " + str(round((time.time() / 60) - start_time, 1)) + " mins"
     draw_progress_bar(1, total_time)
     print("\n")

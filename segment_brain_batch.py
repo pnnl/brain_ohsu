@@ -14,12 +14,37 @@ if __name__ == "__main__":
     base_path = os.path.abspath(__file__ + "/..")
         # Load the network
     model_weight_list = [
-        "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.0005_training_" + add_suffix + "__Dec7_combo_val_test_background_0.5_weights.hdf5",
-        "/data/model-weights/trailmap_model.hdf5"
+         "/data/model-weights/trailmap_model.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_0.2_weights.hdf5",
+
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_0.5_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_equal_weights.hdf5",
+
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.0005_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.0001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_0_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_1_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_2_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_False_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_False_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_1.0_rot_0.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5"
+
 ]
 
     # data testing
-    image_path  =  [ base_path + f"/data/testing/testing-original{add_suffix}"]
+    validation_data = True
+    if validation_data:
+        image_path  =  [base_path + f"/data/testing/testing-original_test_" + str(x + 1) for x in range(6)]
+        #image_path.remove(base_path + f"/data/testing/testing-original{add_suffix}")
+    else:
+        image_path  =  [ base_path + f"/data/testing/testing-original{add_suffix}"]
     combos = list(itertools.product(image_path, model_weight_list))
 
     input_batch, model_weight   = combos[int(sys.argv[-1])]
@@ -47,7 +72,10 @@ if __name__ == "__main__":
         input_folder = os.path.normpath(input_folder)
 
         # Output folder name
-        output_name = "seg-" + name_folders + os.path.basename(input_folder)
+        if validation_data:
+            output_name = "seg-" + name_folders + os.path.basename(input_folder) + "_val"
+        else:
+            output_name = "seg-" + name_folders + os.path.basename(input_folder)
         # save in test/validation folder
         output_dir = os.path.dirname(input_folder)
 
@@ -69,7 +97,7 @@ if __name__ == "__main__":
         if gauss:
             print("gauss")
             print(gauss)
-            segment_brain_gauss(input_folder, output_folder, model, overlap_var, name_folders)
+            segment_brain_gauss(input_folder, output_folder, model, overlap_var, name_folders, validation_data = validation_data)
         else:
-            segment_brain_normal(input_folder, output_folder, model, name_folders)
+            segment_brain_normal(input_folder, output_folder, model, name_folders, validation_data=validation_data)
 

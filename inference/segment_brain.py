@@ -7,6 +7,8 @@ import sys
 from PIL import Image
 from inference.segment_brain_gauss import loss_inference
 import csv
+import json
+import re
 
 from utilities.utilities import *
 
@@ -98,13 +100,16 @@ a batch of chunks. To conserve memory, the function will load sections of the br
 """
 
 
-def segment_brain_normal(input_folder, output_folder, model, name, tif_input=True):
+def segment_brain_normal(input_folder, output_folder, model, name, tif_input=True, validation_data = False):
     if tif_input == True:
         file_names = get_dir(os.path.join(input_folder, "volumes"))
         print("file names input volumes")
         print(file_names)
         for i in range(len(file_names)):
             vol = read_tiff_stack(file_names[i])
+            val_amount = max(input_dim, vol.shape[0]//4)
+            if validation_data:
+                vol = vol[vol.shape[0] - val_amount:,: ,: ]
             write_folder_stack(vol, os.path.join(input_folder, f"slices_{name}"))
 
     # Name of folder
@@ -181,7 +186,42 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input=Tru
 
     total_time = "Total: " + str(round((time.time() / 60) - start_time, 1)) + " mins"
     if tif_input == True:
-        output_dict = loss_inference(input_folder, output_folder)
+        output_dict = loss_inference(input_folder, output_folder, validation_data=validation_data)
+
+        with open('inference/dict_model.json') as json_file:
+            dict_model = json.load(json_file)
+
+        def lookup(s, lookups):
+            print("lookup")
+            print(s)
+            for key, value in lookups.items():
+                print(key, value)
+                # if key matches regex
+                re_match_object = re.search(r'{}'.format(key), s)
+                if re_match_object:
+                    print("matched!")
+                    print(key, value)
+                    #sub in suffix name
+                    return value + re_match_object.groups()[0] + re_match_object.groups()[1]
+            return s
+
+
+        new_values = list(output_dict.values())
+        new_values.append(lookup(os.path.basename(output_folder), dict_model))
+        new_values.append("not_guass")
+        new_keys = list(output_dict.keys())
+        new_keys.append("model")
+        new_keys.append("gauss")
+        if validation_data:
+            with open("inference/segment_total_results_validation.csv", "a") as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(new_keys)
+                writer.writerow(new_values)
+        else:
+            with open("inference/segment_total_results.csv", "a") as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(new_keys)
+                writer.writerow(new_values)
 
         with open(output_folder + "/" + f"dict{name}.csv", "w") as csv_file:
             writer = csv.writer(csv_file)
@@ -190,6 +230,7 @@ def segment_brain_normal(input_folder, output_folder, model, name, tif_input=Tru
 
             for key, value in output_dict.items():
                 writer.writerow([value])
+
     draw_progress_bar(1, total_time)
     print("\n")
 

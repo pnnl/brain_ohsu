@@ -69,10 +69,10 @@ def get_dir(path):
     return sorted(tiffs)
 
 dim_offset = 14
-file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_True_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
+file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
 # file_name = "normal_test_1" 
 # file_name = "gauss_test_1"
-#file_name = "seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_last_layer_loss_0.0001_training__val_2_test_1__july23.hdf5_gauss_True_testing-original_test_1" 
+file_name = "seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_1.0__encode_full_layer_loss_0.001_training__test_1__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_False_testing-original_test_1"
 slice_num = 74
 # pred starts at dim_offset in
 pred_num = slice_num + dim_offset
@@ -80,14 +80,14 @@ input_folder = "visualize"
 
 
 # get true labels
-vol = read_tiff_stack("visualize/cube1_labels.tiff")
-write_folder_stack(vol, os.path.join(input_folder, f"slices_truth_labels"))
+vol = read_tiff_stack("visualize/cube1_label.tif")
+write_folder_stack(vol, os.path.join(input_folder, f"slices_truth_label"))
 
 # smaller_folder_stack(f"brain_ohsu/data/testing/{file_name}", os.path.join(input_folder, f"slices_pred_labels"))
 
-# get true volumes
-vol = read_tiff_stack("visualize/cube1.tif")
-write_folder_stack(vol, os.path.join(input_folder, f"slices_truth_volumes"))
+# # get true volumes
+# vol = read_tiff_stack("visualize/cube1.tif")
+# write_folder_stack(vol, os.path.join(input_folder, f"slices_truth_volumes"))
 
 
 # get predicted volumes (already should be in 160 by 160 by 160)
@@ -100,7 +100,7 @@ print(pred_image_array.shape)
 
 # /data/model-weights/best_weights_checkpoint_all_changes_2X_20_aug_rot_normal_False.hdf5
 truth_array = np.array(
-    Image.open(f"visualize/slices_truth_labels/slice000{slice_num}.tiff")
+    Image.open(f"visualize/slices_truth_label/slice000{slice_num}.tiff")
 )
 
 print(truth_array.shape)
@@ -134,7 +134,7 @@ imgray_pred[edge_locs[0], edge_locs[1], :] = (255,255,255)  # white edges
 
 im = Image.fromarray(imgray_pred.astype(np.uint8))
 im.save(
-    f"visualize/{file_name}_fp_fn.tif"
+    f"visualize/{file_name[:10]}_fp_fn.tif"
 )
 
 # compare_image =  np.array(
