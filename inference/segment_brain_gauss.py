@@ -222,6 +222,9 @@ def segment_brain_gauss(
     if tif_input == True:
         file_names = get_dir(os.path.join(input_folder, f"volumes"))
         vol = read_tiff_stack(file_names[0])
+        val_amount = max(input_dim, vol.shape[0]//4)
+        if validation_data:
+            vol = vol[vol.shape[0] - val_amount:,: ,: ]
         print("file names input volumes")
         print(file_names)
         
