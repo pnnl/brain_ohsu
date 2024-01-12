@@ -15,7 +15,11 @@ if __name__ == "__main__":
         # Load the network
     model_weight_list = [
          "/data/model-weights/trailmap_model.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_0.2_weights.hdf5",
+        "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_0.2_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.5_rot_0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_0.5__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
 
         # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_0.5_weights.hdf5",
         # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
@@ -31,7 +35,7 @@ if __name__ == "__main__":
         # "/data/model-weights/best_weights_checkpoint_oversample_bol_False_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
         # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_False_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
 
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
+        "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
         # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_1.0_rot_0.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
         # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
         # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5"
@@ -42,7 +46,7 @@ if __name__ == "__main__":
     validation_data = True
     if validation_data:
         image_path  =  [base_path + f"/data/testing/testing-original_test_" + str(x + 1) for x in range(6)]
-        #image_path.remove(base_path + f"/data/testing/testing-original{add_suffix}")
+        image_path.remove(base_path + f"/data/testing/testing-original{add_suffix}")
     else:
         image_path  =  [ base_path + f"/data/testing/testing-original{add_suffix}"]
     combos = list(itertools.product(image_path, model_weight_list))

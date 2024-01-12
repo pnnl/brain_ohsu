@@ -21,35 +21,6 @@ def write_folder_stack(vol, path):
     for i in range(vol.shape[0]):
         fname = os.path.join(path, "slice" + str(i).zfill(5) + ".tiff")
         cv2.imwrite(fname, vol[i])
-    # dim_offset = 14
-    # for i in range(vol.shape[0]):
-    #     if i > 13 and i < vol.shape[0] -13:
-    #         fname = os.path.join(path, "slice" + str(i).zfill(5) + ".tiff")
-    #         cv2.imwrite(fname, vol[i][dim_offset:-dim_offset,dim_offset:-dim_offset])
-
-
-# def smaller_folder_stack(output_folder, path):
-#     if os.path.exists(path):
-#         print("Overwriting " + path)
-#         shutil.rmtree(path)
-
-#     makedirs(path)
-
-#     fnames = get_dir(output_folder)
-#     vol = []
-#     for i in range(len(fnames)):
-#             if fnames[i][-4:] == "tiff":
-#                 img = cv2.imread(fnames[i], cv2.COLOR_BGR2GRAY)
-#                 vol.append(img)
-#     y_pred = np.array(vol)
-#     # prediction has dim off set padding on x and y. only copied files from dim_off + on the z axis, so that's already alright
-#     y_pred = y_pred  #[:,dim_offset:-dim_offset,dim_offset:-dim_offset]
-#     for i in range(y_pred.shape[0]):
-#         fname = os.path.join(path, "slice" + str(i).zfill(5) + ".tiff")
-#         cv2.imwrite(fname, vol[i])
-#     return
-
-
 
 def read_tiff_stack(path):
     img = Image.open(path)
@@ -69,10 +40,10 @@ def get_dir(path):
     return sorted(tiffs)
 
 dim_offset = 14
-file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_1" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
-# file_name = "normal_test_1" 
-# file_name = "gauss_test_1"
-file_name = "seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_1.0__encode_full_layer_loss_0.001_training__test_1__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_False_testing-original_test_1"
+file_name = "trailmap" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
+# file_name = "trailmap_gauss" 
+# file_name = "rot_gauss"
+# file_name = "rot"
 slice_num = 74
 # pred starts at dim_offset in
 pred_num = slice_num + dim_offset
@@ -82,13 +53,6 @@ input_folder = "visualize"
 # get true labels
 vol = read_tiff_stack("visualize/cube1_label.tif")
 write_folder_stack(vol, os.path.join(input_folder, f"slices_truth_label"))
-
-# smaller_folder_stack(f"brain_ohsu/data/testing/{file_name}", os.path.join(input_folder, f"slices_pred_labels"))
-
-# # get true volumes
-# vol = read_tiff_stack("visualize/cube1.tif")
-# write_folder_stack(vol, os.path.join(input_folder, f"slices_truth_volumes"))
-
 
 # get predicted volumes (already should be in 160 by 160 by 160)
 pred_image_array = np.array(
@@ -134,34 +98,5 @@ imgray_pred[edge_locs[0], edge_locs[1], :] = (255,255,255)  # white edges
 
 im = Image.fromarray(imgray_pred.astype(np.uint8))
 im.save(
-    f"visualize/{file_name[:10]}_fp_fn.tif"
+    f"visualize/{file_name}_fp_fn.tif"
 )
-
-# compare_image =  np.array(
-#     Image.open(
-#         f"brain_ohsu/data/testing/{file_name2}/seg-slice00088.tiff"
-#     )
-# )
-
-# compare_image= compare_image[dim_offset:-dim_offset,dim_offset:-dim_offset]
-# imgray_pred = np.empty((truth_array.shape[0], truth_array.shape[1], 3))
-# tp_locs = np.where((pred_image_array >= 0.5) & (compare_image >= 0.5))
-# print("true postives")
-# print(len(tp_locs[0]))
-# imgray_pred[tp_locs[0], tp_locs[1], :] = (0, 0, 255)  # blue
-# fn_locs = np.where((pred_image_array < 0.5) & (compare_image >= 0.5))
-# print("falsenegatives")
-# print(len(fn_locs[0]))
-# imgray_pred[fn_locs[0], fn_locs[1], :] = (255, 255, 0)  # yellow false negative
-# fp_locs = np.where((pred_image_array >= 0.5) & (compare_image < 0.5))
-# print("false pos")
-# print(len(fp_locs[0]))
-# # false positive
-# imgray_pred[fp_locs[0], fp_locs[1], :] = (255, 0, 0)  # red false positive
-
-
-
-# im = Image.fromarray(imgray_pred.astype(np.uint8))
-# im.save(
-#     "compare.tif"
-# )
