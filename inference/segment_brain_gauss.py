@@ -102,8 +102,9 @@ def loss_inference(input_folder, output_folder, validation_data = False):
 
 
     if validation_data:
-        y_true_flat = y_true_flat[-output_dim:,: ,: ]
-
+        val_amount = max(input_dim, y_true_flat.shape[0]//4)
+        val_dim = val_amount - 2*dim_offset
+        y_true_flat = y_true_flat[-val_dim:,: ,: ]
     background = np.copy(y_true_flat)
     background[background == 2] = 0
     background[background == 3] = 0
@@ -140,6 +141,8 @@ def loss_inference(input_folder, output_folder, validation_data = False):
         vol.append(img)
     output_dict = {}
     y_pred = np.array(vol)
+    print(y_true_flat.shape)
+    print(y_pred.shape)
 
     # add first dimension 1 (normally batch number)
     tensor1 = tf.convert_to_tensor(np.expand_dims(y_true, axis=0))
@@ -350,7 +353,7 @@ def segment_brain_gauss(
     if tif_input == True:
         print(output_folder)
         print(input_folder)
-        output_dict = loss_inference(input_folder, output_folder)
+        output_dict = loss_inference(input_folder, output_folder, validation_data = validation_data)
         with open('inference/dict_model_gauss.json') as json_file:
             dict_model = json.load(json_file)
 

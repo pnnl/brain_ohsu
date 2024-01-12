@@ -1,0 +1,26 @@
+{"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_0.5_weights.hdf5_gauss_True_testing-original(.*)": "Background_0.5",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_0.2_weights.hdf5_gauss_True_testing-original(.*)": "2Default_Weights",
+
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Background_1.0",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_equal_weights.hdf5_gauss_True_testing-original(.*)": "Eqaul_Weights",
+
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.0005_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "0.0005_Loss",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.0001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "0.0001_Loss",
+
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_0_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "First_Layer",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_1_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Middle_Layer",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_2_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Last_Layer",
+
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_False_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Oversample",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_False_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Learn_Rate",
+
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Rotate",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_1.0_rot_0.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Elastic",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "Flip",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "All_Changes",
+"seg-_overlap_2.0_best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "All_Changes_05",
+"seg-_overlap_2.0_/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_0.5__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "rot_05",
+"seg-_overlap_2.0_/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.5_rot_0__encode_full_layer_loss_0.001_training_(.*)__Dec7_combo_val_test_background_1.0_weights.hdf5_gauss_True_testing-original(.*)": "rot_05",
+"seg-_overlap_2.0_trailmap_(.*).hdf5_gauss_True_testing-original_(.*)": "Orig2"
+}
+
