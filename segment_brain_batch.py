@@ -15,30 +15,8 @@ if __name__ == "__main__":
         # Load the network
     model_weight_list = [
          "/data/model-weights/trailmap_model.hdf5",
-        "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_0.2_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_False_flip_bol_True_el_0.5_rot_0.5__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.5_rot_0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_0.5__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_0.5_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_equal_weights.hdf5",
-
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.0005_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.0001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_0_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_1_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_2_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_False_aug_bol_True_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_False_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
 
         "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_0.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_1.0_rot_0.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_False_lr_bol_True_flip_bol_False_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5",
-        # "/data/model-weights/best_weights_checkpoint_oversample_bol_True_aug_bol_True_lr_bol_True_flip_bol_True_el_1.0_rot_1.0__encode_full_layer_loss_0.001_training_" + add_suffix + "__Dec7_combo_val_test_background_1.0_weights.hdf5"
 
 ]
 
