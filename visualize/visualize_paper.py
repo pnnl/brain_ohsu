@@ -40,11 +40,12 @@ def get_dir(path):
     return sorted(tiffs)
 
 dim_offset = 14
-file_name = "trailmap" # visualize/gauss_best_val_2_1 seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_2
+file_name = "trailmap" # 
 # file_name = "trailmap_gauss" 
 # file_name = "rot_gauss"
-# file_name = "rot"
-slice_num = 74
+file_name = "rot"
+#file_name = "seg-_overlap_2.0_trailmap_model.hdf5_gauss_False_testing-original_test_1"
+slice_num = 54
 # pred starts at dim_offset in
 pred_num = slice_num + dim_offset
 input_folder = "visualize"
