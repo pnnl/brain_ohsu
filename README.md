@@ -72,17 +72,23 @@ python3 train.py "_july23_test" {combination_number}
 ## Authors
 
 The modified code was created for a paper by:
-Marjolein Oostrom, Michael A. Muniak, Rogene Eichler West, Sarah Akers, Paritosh Pande, Moses Obiri, Wei Wang, Kasey Bowyer, Zhuhao Wu, Lisa Bramer, Tianyi Mao*, Bobbie Jo Webb-Robertson*
+Marjolein Oostrom, Michael A. Muniak, Rogene Eichler West, Sarah Akers, Paritosh Pande, Moses Obiri, Wei Wang, Kasey Bowyer, Zhuhao Wu, Lisa Bramer, Tianyi Mao, Bobbie Jo Webb-Robertson
 
 The work is adapted from  [Github TrailMap](https://github.com/AlbertPun/TRAILMAP), which was created by Albert Pun and Drew Friedmann
 
+## Citing
+
+Modified code:
+Oostrom, M., Muniak, M. A., Eichler West, R. M., Akers, S., Pande, P., Obiri, M., ... & Webb-Robertson, B. J. M. (2024). Fine-tuning TrailMap: The utility of transfer learning to improve the performance of deep learning in axon segmentation of light-sheet microscopy images. PloS one, 19(3), e0293856.
+
+Original TrailMap:
+Friedmann D, Pun A, Adams EL, Lui JH, Kebschull JM, Grutzner SM, et al. Mapping mesoscale axonal projections in the mouse brain using a 3D convolutional network. Proceedings of the National Academy of Sciences. 2020;117(20):11068–75. pmid:32358193
+
 ## Acknowledgments
 
+MTO, RMEW, SA, MO, LMB, BJWR were supported by the Laboratory Directed Research and Development at Pacific Northwest National Laboratory (PNNL), a Department of Energy facility operated by Battelle under contract DE-AC05-76RLO01830. WW, KB, and ZW were supported in part by a NIH/BRAIN Initiative Grant RF1MH128969. MAM and TM were supported by two NIH/BRAIN Initiative Grants R01NS104944, RF1MH120119 and NIH R01NS081071.
 
-MO, RMEW, SA, MO, LB, BJWR were supported by the Laboratory Directed Research and Development at Pacific Northwest National Laboratory (PNNL), a Department of Energy facility operated by Battelle under contract DE-AC05-76RLO01830. WW, KB, and ZW were supported in part by a NIH/BRAIN Initiative Grant RF1MH128969. MAM and TM were supported by two NIH/BRAIN Initiative Grants R01NS104944, RF1MH120119 and NIH R01NS081071. This research is affiliated with the Pacific northwest bioMedical Innovation Co-laboratory (PMedIC) collaboration between OHSU and PNNL.
-
-The work is adapted from work sponsored by: 
-* Research sponsored by Liqun Luo's Lab
+We thank Amelia Culp for assistance with animal injections, and Dr. Patricia Jensen for providing DbhCre mice. This research is affiliated with the Pacific northwest bioMedical Innovation Co-laboraoty (PMedIC) joint research collaboration between Pacific Northwest National Laboratory (PNNL) and Oregon Health & Science University (OHSU).
 
 ## Disclaimer
 
