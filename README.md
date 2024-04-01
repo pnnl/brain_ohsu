@@ -79,7 +79,7 @@ The work is adapted from  [Github TrailMap](https://github.com/AlbertPun/TRAILMA
 ## Citing
 
 Modified code:
-Oostrom, M., Muniak, M. A., Eichler West, R. M., Akers, S., Pande, P., Obiri, M., ... & Webb-Robertson, B. J. M. (2024). Fine-tuning TrailMap: The utility of transfer learning to improve the performance of deep learning in axon segmentation of light-sheet microscopy images. PloS one, 19(3), e0293856.
+Oostrom, Marjolein, Michael A. Muniak, Rogene M. Eichler West, Sarah Akers, Paritosh Pande, Moses Obiri, Wei Wang et al. "Fine-tuning TrailMap: The utility of transfer learning to improve the performance of deep learning in axon segmentation of light-sheet microscopy images." PloS one 19, no. 3 (2024): e0293856.
 
 Original TrailMap:
 Friedmann D, Pun A, Adams EL, Lui JH, Kebschull JM, Grutzner SM, et al. Mapping mesoscale axonal projections in the mouse brain using a 3D convolutional network. Proceedings of the National Academy of Sciences. 2020;117(20):11068–75. pmid:32358193
