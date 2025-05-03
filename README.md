@@ -43,6 +43,7 @@ Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun
 * The boolean argument indicates if you want to use gaussian inference
 * The string argument indicates training/validation/test data division suffix (leave '' if not using suffix)
 * Use the combination number of the desired model_weight and image_path combination as an argument for segment_brain_batch.py.
+* Change Validation_Data to False if using the whole dataset, not just the last 1/4
 
 
 ```
@@ -59,7 +60,7 @@ For preparing data:
 * The second string argument indicates training/validation/test data division suffix (leave '' if not using suffix). 
 * The boolean argument indicates if the training should oversample 
 * The last number indicated the number of samples per cube
-* The test data is created from the first 3/5 of the cube, and validation data is created from the last 1/4 of the cube
+* The training data is created from the first 3/4 of the cube, and validation data is created from the last 1/4 of the cube
 * If 1/4 of the cube is less than the input dim, the validation data uses the last input_dim pixels of the cube
 
 ```
