@@ -21,7 +21,7 @@ if __name__ == "__main__":
 ]
 
     # data testing
-    validation_data = True
+    validation_data = False
     if validation_data:
         image_path  =  [base_path + f"/data/testing/testing-original_test_" + str(x + 1) for x in range(6)]
         image_path.remove(base_path + f"/data/testing/testing-original{add_suffix}")
