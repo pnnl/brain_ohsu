@@ -44,7 +44,7 @@ Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun
 * The string argument indicates training/validation/test data division suffix (leave '' if not using suffix)
 * Use the combination number of the desired model_weight and image_path combination as an argument for segment_brain_batch.py.
 * Change Validation_Data to False if using the whole dataset, not just the last 1/4
-
+* For our data, the volume should be be bigger than the labeled data by dim_offset in all dimensions. For example, the input image used by TrailMap is larger than the segmented output (64 pixel3 input vs. 36 pixel3 output), so the segmented image is smaller than the input image by an offset at the edges (64 pixel3 input– 36 pixel3 output/2 = 14-pixel offset). Therefore, we used a 188 pixel3 input to predict a 160 pixel3 output.
 
 ```
 python3 segment_brain_batch.py True "_test_1" {combination_number}
@@ -62,6 +62,7 @@ For preparing data:
 * The last number indicated the number of samples per cube
 * The training data is created from the first 3/4 of the cube, and validation data is created from the last 1/4 of the cube
 * If 1/4 of the cube is less than the input dim, the validation data uses the last input_dim pixels of the cube
+* For our data, the volume should be be bigger than the labeled data by dim_offset in all dimensions. For example, the input image used by TrailMap is larger than the segmented output (64 pixel3 input vs. 36 pixel3 output), so the segmented image is smaller than the input image by an offset at the edges (64 pixel3 input– 36 pixel3 output/2 = 14-pixel offset). Therefore, we used a 188 pixel3 input to predict a 160 pixel3 output.
 
 ```
 python3 prepare_data.py "generate_validation_set" "_test_6" False 25
