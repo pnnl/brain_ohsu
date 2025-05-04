@@ -55,9 +55,9 @@ if __name__ == "__main__":
 
         # Output folder name
         if validation_data:
-            output_name = "seg-" + name_folders + os.path.basename(input_folder) + "_val"
+            output_name = "seg-trailmap" + name_folders + os.path.basename(input_folder) + "_val"
         else:
-            output_name = "seg-" + name_folders + os.path.basename(input_folder)
+            output_name = "seg-trailmap" + name_folders + os.path.basename(input_folder)
         # save in test/validation folder
         output_dir = os.path.dirname(input_folder)
 
