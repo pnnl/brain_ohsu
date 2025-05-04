@@ -38,7 +38,7 @@ Please check the shutil.rm and save functions throughout the code to make sure t
 
 ## Inference
 
-Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. The performance metrics are only run on the first tif file witin a folder.
+Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. The performance metrics are only run on the first tif file witin a folder. If you wish to segment your data without first incorporating these modifications, such as the dim_off difference in input/output files or including the labeled data, please use the original code at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with your hdf5 model. 
 * Add model weights path to segment_brain_batch.py at the model_weight_list variable.
 * Add the path to the data (with label and volume folders) for the image_path variable. This path can include an suffix variable. This script will use labels to calculate performance metrics for inference.
 * The boolean argument indicates if you want to use gaussian inference
@@ -54,7 +54,7 @@ python3 segment_brain_batch.py True "_test_1" {combination_number}
 
 ## Training
 
-Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. 
+Please follow the instructions at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP) with these modifications. If you wish to train your data without first incorporating these modifications, such as splitting each input volumbe into training and validation data, please use the original code at [Github TrailMap](https://github.com/AlbertPun/TRAILMAP). 
 For preparing data:
 * When preparing the data for training, the location of the  data is set directly with the prepare_data.py file at data_original_path (input) and data_set_path (output) for each of the functions.
 * The data_set_path should match the name provided as the training data under train.py (training_path and validation_path).
