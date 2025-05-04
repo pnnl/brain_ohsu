@@ -60,6 +60,7 @@ For preparing data:
 * The second string argument indicates training/validation/test data division suffix (leave '' if not using suffix). 
 * The boolean argument indicates if the training should oversample 
 * The last number indicated the number of samples per cube
+* shutil.rm is commented out for removing the labels and volumes folders if they exist. Comment back in if you do want to remove the folders
 * The training data is created from the first 3/4 of the cube, and validation data is created from the last 1/4 of the cube
 * If 1/4 of the cube is less than the input dim, the validation data uses the last input_dim pixels of the cube
 * For our data, the volume should be be bigger than the labeled data by dim_offset in all dimensions. For example, the input image used by TrailMap is larger than the segmented output (64 pixel3 input vs. 36 pixel3 output), so the segmented image is smaller than the input image by an offset at the edges (64 pixel3 input– 36 pixel3 output/2 = 14-pixel offset). Therefore, we used a 188 pixel3 input to predict a 160 pixel3 output.
